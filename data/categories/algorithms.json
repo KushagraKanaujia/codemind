@@ -1,0 +1,317 @@
+[
+  {
+    "code": "def quicksort(arr):\n    \"\"\"Quicksort implementation with Lomuto partition scheme\"\"\"\n    if len(arr) <= 1:\n        return arr\n    \n    def partition(low, high):\n        pivot = arr[high]\n        i = low - 1\n        for j in range(low, high):\n            if arr[j] <= pivot:\n                i += 1\n                arr[i], arr[j] = arr[j], arr[i]\n        arr[i + 1], arr[high] = arr[high], arr[i + 1]\n        return i + 1\n    \n    def quicksort_helper(low, high):\n        if low < high:\n            pi = partition(low, high)\n            quicksort_helper(low, pi - 1)\n            quicksort_helper(pi + 1, high)\n    \n    quicksort_helper(0, len(arr) - 1)\n    return arr",
+    "language": "python",
+    "source": "algorithms/sorting/quicksort.py",
+    "description": "Quicksort algorithm with in-place partitioning using Lomuto scheme",
+    "tags": ["sorting", "divide-and-conquer", "quicksort", "recursion"]
+  },
+  {
+    "code": "function mergeSort(arr) {\n    // Base case: arrays with 0 or 1 element are sorted\n    if (arr.length <= 1) return arr;\n    \n    const mid = Math.floor(arr.length / 2);\n    const left = mergeSort(arr.slice(0, mid));\n    const right = mergeSort(arr.slice(mid));\n    \n    // Merge two sorted arrays\n    function merge(left, right) {\n        const result = [];\n        let i = 0, j = 0;\n        \n        while (i < left.length && j < right.length) {\n            if (left[i] <= right[j]) {\n                result.push(left[i++]);\n            } else {\n                result.push(right[j++]);\n            }\n        }\n        \n        return result.concat(left.slice(i)).concat(right.slice(j));\n    }\n    \n    return merge(left, right);\n}",
+    "language": "javascript",
+    "source": "algorithms/sorting/mergesort.js",
+    "description": "Merge sort algorithm with divide and conquer approach",
+    "tags": ["sorting", "divide-and-conquer", "mergesort", "stable-sort"]
+  },
+  {
+    "code": "#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass HeapSort {\npublic:\n    void heapify(vector<int>& arr, int n, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n        \n        if (left < n && arr[left] > arr[largest])\n            largest = left;\n        \n        if (right < n && arr[right] > arr[largest])\n            largest = right;\n        \n        if (largest != i) {\n            swap(arr[i], arr[largest]);\n            heapify(arr, n, largest);\n        }\n    }\n    \n    void sort(vector<int>& arr) {\n        int n = arr.size();\n        \n        // Build max heap\n        for (int i = n / 2 - 1; i >= 0; i--)\n            heapify(arr, n, i);\n        \n        // Extract elements from heap\n        for (int i = n - 1; i > 0; i--) {\n            swap(arr[0], arr[i]);\n            heapify(arr, i, 0);\n        }\n    }\n};",
+    "language": "cpp",
+    "source": "algorithms/sorting/heapsort.cpp",
+    "description": "Heap sort implementation using max heap",
+    "tags": ["sorting", "heap", "heapsort", "in-place"]
+  },
+  {
+    "code": "public class RadixSort {\n    public static void radixSort(int[] arr) {\n        int max = getMax(arr);\n        \n        // Do counting sort for every digit\n        for (int exp = 1; max / exp > 0; exp *= 10) {\n            countingSort(arr, exp);\n        }\n    }\n    \n    private static int getMax(int[] arr) {\n        int max = arr[0];\n        for (int i = 1; i < arr.length; i++) {\n            if (arr[i] > max) max = arr[i];\n        }\n        return max;\n    }\n    \n    private static void countingSort(int[] arr, int exp) {\n        int n = arr.length;\n        int[] output = new int[n];\n        int[] count = new int[10];\n        \n        // Store count of occurrences\n        for (int i = 0; i < n; i++) {\n            count[(arr[i] / exp) % 10]++;\n        }\n        \n        // Change count[i] to actual position\n        for (int i = 1; i < 10; i++) {\n            count[i] += count[i - 1];\n        }\n        \n        // Build output array\n        for (int i = n - 1; i >= 0; i--) {\n            int digit = (arr[i] / exp) % 10;\n            output[count[digit] - 1] = arr[i];\n            count[digit]--;\n        }\n        \n        // Copy output to arr\n        System.arraycopy(output, 0, arr, 0, n);\n    }\n}",
+    "language": "java",
+    "source": "algorithms/sorting/radixsort.java",
+    "description": "Radix sort using counting sort as subroutine for digit-by-digit sorting",
+    "tags": ["sorting", "radix-sort", "counting-sort", "linear-time"]
+  },
+  {
+    "code": "def binary_search(arr, target):\n    \"\"\"Iterative binary search implementation\"\"\"\n    left, right = 0, len(arr) - 1\n    \n    while left <= right:\n        mid = left + (right - left) // 2\n        \n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return -1  # Target not found",
+    "language": "python",
+    "source": "algorithms/searching/binary_search.py",
+    "description": "Iterative binary search for sorted arrays with O(log n) complexity",
+    "tags": ["searching", "binary-search", "divide-and-conquer", "sorted-array"]
+  },
+  {
+    "code": "function jumpSearch(arr, target) {\n    const n = arr.length;\n    const step = Math.floor(Math.sqrt(n));\n    let prev = 0;\n    \n    // Finding the block where element is present\n    while (arr[Math.min(step, n) - 1] < target) {\n        prev = step;\n        step += Math.floor(Math.sqrt(n));\n        if (prev >= n) return -1;\n    }\n    \n    // Linear search in the identified block\n    while (arr[prev] < target) {\n        prev++;\n        if (prev === Math.min(step, n)) return -1;\n    }\n    \n    if (arr[prev] === target) return prev;\n    return -1;\n}",
+    "language": "javascript",
+    "source": "algorithms/searching/jump_search.js",
+    "description": "Jump search algorithm for sorted arrays with O(√n) complexity",
+    "tags": ["searching", "jump-search", "sorted-array", "block-search"]
+  },
+  {
+    "code": "def interpolation_search(arr, target):\n    \"\"\"Interpolation search for uniformly distributed sorted arrays\"\"\"\n    low = 0\n    high = len(arr) - 1\n    \n    while low <= high and target >= arr[low] and target <= arr[high]:\n        if low == high:\n            if arr[low] == target:\n                return low\n            return -1\n        \n        # Probing the position with interpolation formula\n        pos = low + int(((high - low) / (arr[high] - arr[low])) * (target - arr[low]))\n        \n        if arr[pos] == target:\n            return pos\n        \n        if arr[pos] < target:\n            low = pos + 1\n        else:\n            high = pos - 1\n    \n    return -1",
+    "language": "python",
+    "source": "algorithms/searching/interpolation_search.py",
+    "description": "Interpolation search optimized for uniformly distributed data",
+    "tags": ["searching", "interpolation-search", "sorted-array", "adaptive"]
+  },
+  {
+    "code": "import java.util.*;\n\nclass DFS {\n    private Map<Integer, List<Integer>> graph;\n    private Set<Integer> visited;\n    \n    public DFS() {\n        graph = new HashMap<>();\n        visited = new HashSet<>();\n    }\n    \n    public void addEdge(int u, int v) {\n        graph.putIfAbsent(u, new ArrayList<>());\n        graph.get(u).add(v);\n    }\n    \n    public void dfsRecursive(int node) {\n        visited.add(node);\n        System.out.print(node + \" \");\n        \n        if (graph.containsKey(node)) {\n            for (int neighbor : graph.get(node)) {\n                if (!visited.contains(neighbor)) {\n                    dfsRecursive(neighbor);\n                }\n            }\n        }\n    }\n    \n    public void dfsIterative(int start) {\n        Stack<Integer> stack = new Stack<>();\n        stack.push(start);\n        \n        while (!stack.isEmpty()) {\n            int node = stack.pop();\n            \n            if (!visited.contains(node)) {\n                visited.add(node);\n                System.out.print(node + \" \");\n                \n                if (graph.containsKey(node)) {\n                    for (int neighbor : graph.get(node)) {\n                        if (!visited.contains(neighbor)) {\n                            stack.push(neighbor);\n                        }\n                    }\n                }\n            }\n        }\n    }\n}",
+    "language": "java",
+    "source": "algorithms/graph/dfs.java",
+    "description": "Depth-first search with both recursive and iterative implementations",
+    "tags": ["graph", "dfs", "traversal", "recursion", "stack"]
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs(graph, start):\n    \"\"\"Breadth-first search implementation\"\"\"\n    visited = set()\n    queue = deque([start])\n    visited.add(start)\n    result = []\n    \n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        \n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    \n    return result\n\ndef bfs_shortest_path(graph, start, end):\n    \"\"\"Find shortest path using BFS\"\"\"\n    if start == end:\n        return [start]\n    \n    visited = {start}\n    queue = deque([(start, [start])])\n    \n    while queue:\n        node, path = queue.popleft()\n        \n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                if neighbor == end:\n                    return path + [neighbor]\n                visited.add(neighbor)\n                queue.append((neighbor, path + [neighbor]))\n    \n    return None",
+    "language": "python",
+    "source": "algorithms/graph/bfs.py",
+    "description": "BFS traversal and shortest path finding in unweighted graphs",
+    "tags": ["graph", "bfs", "traversal", "shortest-path", "queue"]
+  },
+  {
+    "code": "import heapq\nfrom collections import defaultdict\n\ndef dijkstra(graph, start):\n    \"\"\"\n    Dijkstra's shortest path algorithm\n    graph: adjacency list {node: [(neighbor, weight), ...]}\n    \"\"\"\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]  # (distance, node)\n    visited = set()\n    \n    while pq:\n        current_dist, current = heapq.heappop(pq)\n        \n        if current in visited:\n            continue\n        \n        visited.add(current)\n        \n        for neighbor, weight in graph.get(current, []):\n            distance = current_dist + weight\n            \n            if distance < distances[neighbor]:\n                distances[neighbor] = distance\n                heapq.heappush(pq, (distance, neighbor))\n    \n    return distances",
+    "language": "python",
+    "source": "algorithms/graph/dijkstra.py",
+    "description": "Dijkstra's algorithm for single-source shortest paths in weighted graphs",
+    "tags": ["graph", "dijkstra", "shortest-path", "greedy", "priority-queue"]
+  },
+  {
+    "code": "function bellmanFord(vertices, edges, start) {\n    // Initialize distances\n    const distances = new Array(vertices).fill(Infinity);\n    distances[start] = 0;\n    \n    // Relax edges V-1 times\n    for (let i = 0; i < vertices - 1; i++) {\n        for (const [u, v, weight] of edges) {\n            if (distances[u] !== Infinity && distances[u] + weight < distances[v]) {\n                distances[v] = distances[u] + weight;\n            }\n        }\n    }\n    \n    // Check for negative cycles\n    for (const [u, v, weight] of edges) {\n        if (distances[u] !== Infinity && distances[u] + weight < distances[v]) {\n            throw new Error('Graph contains negative weight cycle');\n        }\n    }\n    \n    return distances;\n}",
+    "language": "javascript",
+    "source": "algorithms/graph/bellman_ford.js",
+    "description": "Bellman-Ford algorithm for shortest paths with negative edge weights",
+    "tags": ["graph", "bellman-ford", "shortest-path", "negative-weights", "dynamic-programming"]
+  },
+  {
+    "code": "def floyd_warshall(graph, n):\n    \"\"\"\n    Floyd-Warshall all-pairs shortest path algorithm\n    graph: adjacency matrix (n x n)\n    \"\"\"\n    # Initialize distance matrix\n    dist = [[float('inf')] * n for _ in range(n)]\n    \n    # Distance from node to itself is 0\n    for i in range(n):\n        dist[i][i] = 0\n    \n    # Copy graph weights\n    for i in range(n):\n        for j in range(n):\n            if graph[i][j] != 0:\n                dist[i][j] = graph[i][j]\n    \n    # Floyd-Warshall algorithm\n    for k in range(n):\n        for i in range(n):\n            for j in range(n):\n                if dist[i][k] + dist[k][j] < dist[i][j]:\n                    dist[i][j] = dist[i][k] + dist[k][j]\n    \n    return dist",
+    "language": "python",
+    "source": "algorithms/graph/floyd_warshall.py",
+    "description": "Floyd-Warshall algorithm for all-pairs shortest paths",
+    "tags": ["graph", "floyd-warshall", "shortest-path", "all-pairs", "dynamic-programming"]
+  },
+  {
+    "code": "function kmpSearch(text, pattern) {\n    const n = text.length;\n    const m = pattern.length;\n    \n    // Build LPS (Longest Proper Prefix which is also Suffix) array\n    function buildLPS() {\n        const lps = new Array(m).fill(0);\n        let len = 0;\n        let i = 1;\n        \n        while (i < m) {\n            if (pattern[i] === pattern[len]) {\n                len++;\n                lps[i] = len;\n                i++;\n            } else {\n                if (len !== 0) {\n                    len = lps[len - 1];\n                } else {\n                    lps[i] = 0;\n                    i++;\n                }\n            }\n        }\n        return lps;\n    }\n    \n    const lps = buildLPS();\n    const matches = [];\n    let i = 0; // index for text\n    let j = 0; // index for pattern\n    \n    while (i < n) {\n        if (pattern[j] === text[i]) {\n            i++;\n            j++;\n        }\n        \n        if (j === m) {\n            matches.push(i - j);\n            j = lps[j - 1];\n        } else if (i < n && pattern[j] !== text[i]) {\n            if (j !== 0) {\n                j = lps[j - 1];\n            } else {\n                i++;\n            }\n        }\n    }\n    \n    return matches;\n}",
+    "language": "javascript",
+    "source": "algorithms/string/kmp.js",
+    "description": "Knuth-Morris-Pratt pattern matching algorithm with linear time complexity",
+    "tags": ["string", "kmp", "pattern-matching", "substring-search"]
+  },
+  {
+    "code": "def rabin_karp(text, pattern, prime=101):\n    \"\"\"\n    Rabin-Karp algorithm for pattern matching using rolling hash\n    \"\"\"\n    n, m = len(text), len(pattern)\n    d = 256  # Number of characters in alphabet\n    h = pow(d, m - 1, prime)\n    p_hash = 0  # Hash value for pattern\n    t_hash = 0  # Hash value for text window\n    matches = []\n    \n    # Calculate initial hash values\n    for i in range(m):\n        p_hash = (d * p_hash + ord(pattern[i])) % prime\n        t_hash = (d * t_hash + ord(text[i])) % prime\n    \n    # Slide pattern over text\n    for i in range(n - m + 1):\n        # Check if hash values match\n        if p_hash == t_hash:\n            # Verify character by character\n            if text[i:i + m] == pattern:\n                matches.append(i)\n        \n        # Calculate hash for next window\n        if i < n - m:\n            t_hash = (d * (t_hash - ord(text[i]) * h) + ord(text[i + m])) % prime\n            if t_hash < 0:\n                t_hash += prime\n    \n    return matches",
+    "language": "python",
+    "source": "algorithms/string/rabin_karp.py",
+    "description": "Rabin-Karp string matching using rolling hash for efficient searches",
+    "tags": ["string", "rabin-karp", "hashing", "pattern-matching", "rolling-hash"]
+  },
+  {
+    "code": "public class ZAlgorithm {\n    public static int[] calculateZ(String s) {\n        int n = s.length();\n        int[] z = new int[n];\n        int left = 0, right = 0;\n        \n        for (int i = 1; i < n; i++) {\n            if (i > right) {\n                left = right = i;\n                while (right < n && s.charAt(right - left) == s.charAt(right)) {\n                    right++;\n                }\n                z[i] = right - left;\n                right--;\n            } else {\n                int k = i - left;\n                if (z[k] < right - i + 1) {\n                    z[i] = z[k];\n                } else {\n                    left = i;\n                    while (right < n && s.charAt(right - left) == s.charAt(right)) {\n                        right++;\n                    }\n                    z[i] = right - left;\n                    right--;\n                }\n            }\n        }\n        return z;\n    }\n    \n    public static List<Integer> search(String text, String pattern) {\n        String concat = pattern + \"$\" + text;\n        int[] z = calculateZ(concat);\n        List<Integer> matches = new ArrayList<>();\n        \n        for (int i = 0; i < z.length; i++) {\n            if (z[i] == pattern.length()) {\n                matches.add(i - pattern.length() - 1);\n            }\n        }\n        return matches;\n    }\n}",
+    "language": "java",
+    "source": "algorithms/string/z_algorithm.java",
+    "description": "Z-algorithm for linear time pattern matching and string analysis",
+    "tags": ["string", "z-algorithm", "pattern-matching", "linear-time"]
+  },
+  {
+    "code": "def longest_common_subsequence(text1, text2):\n    \"\"\"\n    Dynamic programming solution for LCS problem\n    Returns both length and the actual LCS\n    \"\"\"\n    m, n = len(text1), len(text2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    \n    # Fill dp table\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if text1[i - 1] == text2[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1] + 1\n            else:\n                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n    \n    # Backtrack to find the LCS\n    lcs = []\n    i, j = m, n\n    while i > 0 and j > 0:\n        if text1[i - 1] == text2[j - 1]:\n            lcs.append(text1[i - 1])\n            i -= 1\n            j -= 1\n        elif dp[i - 1][j] > dp[i][j - 1]:\n            i -= 1\n        else:\n            j -= 1\n    \n    return dp[m][n], ''.join(reversed(lcs))",
+    "language": "python",
+    "source": "algorithms/dp/lcs.py",
+    "description": "Longest Common Subsequence using dynamic programming with backtracking",
+    "tags": ["dynamic-programming", "lcs", "string", "subsequence"]
+  },
+  {
+    "code": "function knapsack01(weights, values, capacity) {\n    const n = weights.length;\n    const dp = Array(n + 1).fill(null).map(() => Array(capacity + 1).fill(0));\n    \n    // Build dp table\n    for (let i = 1; i <= n; i++) {\n        for (let w = 1; w <= capacity; w++) {\n            if (weights[i - 1] <= w) {\n                dp[i][w] = Math.max(\n                    values[i - 1] + dp[i - 1][w - weights[i - 1]],\n                    dp[i - 1][w]\n                );\n            } else {\n                dp[i][w] = dp[i - 1][w];\n            }\n        }\n    }\n    \n    // Backtrack to find selected items\n    const items = [];\n    let i = n, w = capacity;\n    while (i > 0 && w > 0) {\n        if (dp[i][w] !== dp[i - 1][w]) {\n            items.push(i - 1);\n            w -= weights[i - 1];\n        }\n        i--;\n    }\n    \n    return {\n        maxValue: dp[n][capacity],\n        items: items.reverse()\n    };\n}",
+    "language": "javascript",
+    "source": "algorithms/dp/knapsack.js",
+    "description": "0/1 Knapsack problem with item tracking using dynamic programming",
+    "tags": ["dynamic-programming", "knapsack", "optimization", "backtracking"]
+  },
+  {
+    "code": "def coin_change(coins, amount):\n    \"\"\"\n    Minimum coins needed to make amount\n    Returns count and the coins used\n    \"\"\"\n    dp = [float('inf')] * (amount + 1)\n    dp[0] = 0\n    parent = [-1] * (amount + 1)\n    \n    for i in range(1, amount + 1):\n        for coin in coins:\n            if coin <= i and dp[i - coin] + 1 < dp[i]:\n                dp[i] = dp[i - coin] + 1\n                parent[i] = coin\n    \n    if dp[amount] == float('inf'):\n        return -1, []\n    \n    # Reconstruct solution\n    result = []\n    curr = amount\n    while curr > 0:\n        result.append(parent[curr])\n        curr -= parent[curr]\n    \n    return dp[amount], result",
+    "language": "python",
+    "source": "algorithms/dp/coin_change.py",
+    "description": "Coin change problem finding minimum coins with solution reconstruction",
+    "tags": ["dynamic-programming", "coin-change", "optimization", "greedy"]
+  },
+  {
+    "code": "def edit_distance(str1, str2):\n    \"\"\"\n    Levenshtein distance - minimum edits to transform str1 to str2\n    Operations: insert, delete, replace\n    \"\"\"\n    m, n = len(str1), len(str2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    \n    # Base cases\n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    \n    # Fill dp table\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if str1[i - 1] == str2[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1]\n            else:\n                dp[i][j] = 1 + min(\n                    dp[i - 1][j],      # Delete\n                    dp[i][j - 1],      # Insert\n                    dp[i - 1][j - 1]   # Replace\n                )\n    \n    return dp[m][n]",
+    "language": "python",
+    "source": "algorithms/dp/edit_distance.py",
+    "description": "Edit distance (Levenshtein) using dynamic programming",
+    "tags": ["dynamic-programming", "edit-distance", "string", "levenshtein"]
+  },
+  {
+    "code": "public class LongestIncreasingSubsequence {\n    public int lengthOfLIS(int[] nums) {\n        if (nums.length == 0) return 0;\n        \n        int[] dp = new int[nums.length];\n        Arrays.fill(dp, 1);\n        int maxLen = 1;\n        \n        for (int i = 1; i < nums.length; i++) {\n            for (int j = 0; j < i; j++) {\n                if (nums[i] > nums[j]) {\n                    dp[i] = Math.max(dp[i], dp[j] + 1);\n                }\n            }\n            maxLen = Math.max(maxLen, dp[i]);\n        }\n        \n        return maxLen;\n    }\n    \n    // Optimized O(n log n) solution using binary search\n    public int lengthOfLISOptimized(int[] nums) {\n        List<Integer> tails = new ArrayList<>();\n        \n        for (int num : nums) {\n            int pos = Collections.binarySearch(tails, num);\n            if (pos < 0) pos = -(pos + 1);\n            \n            if (pos == tails.size()) {\n                tails.add(num);\n            } else {\n                tails.set(pos, num);\n            }\n        }\n        \n        return tails.size();\n    }\n}",
+    "language": "java",
+    "source": "algorithms/dp/lis.java",
+    "description": "Longest Increasing Subsequence with O(n²) and O(n log n) solutions",
+    "tags": ["dynamic-programming", "lis", "binary-search", "optimization"]
+  },
+  {
+    "code": "#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\n\nstruct HuffmanNode {\n    char data;\n    int freq;\n    HuffmanNode *left, *right;\n    \n    HuffmanNode(char data, int freq) : data(data), freq(freq), left(nullptr), right(nullptr) {}\n};\n\nstruct Compare {\n    bool operator()(HuffmanNode* l, HuffmanNode* r) {\n        return l->freq > r->freq;\n    }\n};\n\nclass HuffmanCoding {\npublic:\n    unordered_map<char, string> encode(const string& text) {\n        // Calculate frequencies\n        unordered_map<char, int> freq;\n        for (char c : text) freq[c]++;\n        \n        // Create priority queue\n        priority_queue<HuffmanNode*, vector<HuffmanNode*>, Compare> pq;\n        for (auto& p : freq) {\n            pq.push(new HuffmanNode(p.first, p.second));\n        }\n        \n        // Build Huffman tree\n        while (pq.size() > 1) {\n            HuffmanNode* left = pq.top(); pq.pop();\n            HuffmanNode* right = pq.top(); pq.pop();\n            \n            HuffmanNode* parent = new HuffmanNode('$', left->freq + right->freq);\n            parent->left = left;\n            parent->right = right;\n            pq.push(parent);\n        }\n        \n        // Generate codes\n        unordered_map<char, string> codes;\n        generateCodes(pq.top(), \"\", codes);\n        return codes;\n    }\n    \nprivate:\n    void generateCodes(HuffmanNode* root, string code, unordered_map<char, string>& codes) {\n        if (!root) return;\n        if (root->data != '$') codes[root->data] = code;\n        generateCodes(root->left, code + \"0\", codes);\n        generateCodes(root->right, code + \"1\", codes);\n    }\n};",
+    "language": "cpp",
+    "source": "algorithms/greedy/huffman.cpp",
+    "description": "Huffman coding for optimal prefix-free encoding using greedy approach",
+    "tags": ["greedy", "huffman", "encoding", "compression", "tree"]
+  },
+  {
+    "code": "function activitySelection(start, finish) {\n    // Activities sorted by finish time\n    const activities = start.map((s, i) => ({ start: s, finish: finish[i], index: i }));\n    activities.sort((a, b) => a.finish - b.finish);\n    \n    const selected = [activities[0].index];\n    let lastFinish = activities[0].finish;\n    \n    for (let i = 1; i < activities.length; i++) {\n        if (activities[i].start >= lastFinish) {\n            selected.push(activities[i].index);\n            lastFinish = activities[i].finish;\n        }\n    }\n    \n    return selected;\n}",
+    "language": "javascript",
+    "source": "algorithms/greedy/activity_selection.js",
+    "description": "Activity selection problem using greedy approach for maximum non-overlapping activities",
+    "tags": ["greedy", "activity-selection", "scheduling", "optimization"]
+  },
+  {
+    "code": "import heapq\n\ndef prim_mst(graph, n):\n    \"\"\"\n    Prim's algorithm for Minimum Spanning Tree\n    graph: adjacency list {node: [(neighbor, weight), ...]}\n    \"\"\"\n    visited = set([0])\n    edges = [(weight, 0, neighbor) for neighbor, weight in graph[0]]\n    heapq.heapify(edges)\n    mst = []\n    total_weight = 0\n    \n    while edges and len(visited) < n:\n        weight, frm, to = heapq.heappop(edges)\n        \n        if to not in visited:\n            visited.add(to)\n            mst.append((frm, to, weight))\n            total_weight += weight\n            \n            for neighbor, w in graph[to]:\n                if neighbor not in visited:\n                    heapq.heappush(edges, (w, to, neighbor))\n    \n    return mst, total_weight",
+    "language": "python",
+    "source": "algorithms/graph/prim.py",
+    "description": "Prim's algorithm for finding Minimum Spanning Tree using priority queue",
+    "tags": ["graph", "mst", "prim", "greedy", "spanning-tree"]
+  },
+  {
+    "code": "class UnionFind {\n    constructor(size) {\n        this.parent = Array.from({ length: size }, (_, i) => i);\n        this.rank = Array(size).fill(0);\n    }\n    \n    find(x) {\n        if (this.parent[x] !== x) {\n            this.parent[x] = this.find(this.parent[x]); // Path compression\n        }\n        return this.parent[x];\n    }\n    \n    union(x, y) {\n        const rootX = this.find(x);\n        const rootY = this.find(y);\n        \n        if (rootX === rootY) return false;\n        \n        // Union by rank\n        if (this.rank[rootX] < this.rank[rootY]) {\n            this.parent[rootX] = rootY;\n        } else if (this.rank[rootX] > this.rank[rootY]) {\n            this.parent[rootY] = rootX;\n        } else {\n            this.parent[rootY] = rootX;\n            this.rank[rootX]++;\n        }\n        return true;\n    }\n}\n\nfunction kruskalMST(n, edges) {\n    // Sort edges by weight\n    edges.sort((a, b) => a[2] - b[2]);\n    \n    const uf = new UnionFind(n);\n    const mst = [];\n    let totalWeight = 0;\n    \n    for (const [u, v, weight] of edges) {\n        if (uf.union(u, v)) {\n            mst.push([u, v, weight]);\n            totalWeight += weight;\n        }\n    }\n    \n    return { mst, totalWeight };\n}",
+    "language": "javascript",
+    "source": "algorithms/graph/kruskal.js",
+    "description": "Kruskal's MST algorithm using Union-Find with path compression",
+    "tags": ["graph", "mst", "kruskal", "union-find", "greedy"]
+  },
+  {
+    "code": "def topological_sort(graph, n):\n    \"\"\"\n    Topological sort using Kahn's algorithm (BFS-based)\n    graph: adjacency list\n    \"\"\"\n    from collections import deque\n    \n    # Calculate in-degrees\n    in_degree = [0] * n\n    for node in graph:\n        for neighbor in graph[node]:\n            in_degree[neighbor] += 1\n    \n    # Initialize queue with nodes having 0 in-degree\n    queue = deque([i for i in range(n) if in_degree[i] == 0])\n    result = []\n    \n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        \n        for neighbor in graph.get(node, []):\n            in_degree[neighbor] -= 1\n            if in_degree[neighbor] == 0:\n                queue.append(neighbor)\n    \n    # Check for cycle\n    if len(result) != n:\n        return None  # Graph has cycle\n    \n    return result",
+    "language": "python",
+    "source": "algorithms/graph/topological_sort.py",
+    "description": "Topological sorting using Kahn's algorithm with cycle detection",
+    "tags": ["graph", "topological-sort", "dag", "bfs", "cycle-detection"]
+  },
+  {
+    "code": "public class TarjanSCC {\n    private int time = 0;\n    private List<List<Integer>> sccs = new ArrayList<>();\n    \n    public List<List<Integer>> findSCCs(Map<Integer, List<Integer>> graph, int n) {\n        int[] disc = new int[n];\n        int[] low = new int[n];\n        boolean[] onStack = new boolean[n];\n        Stack<Integer> stack = new Stack<>();\n        Arrays.fill(disc, -1);\n        \n        for (int i = 0; i < n; i++) {\n            if (disc[i] == -1) {\n                dfs(i, graph, disc, low, onStack, stack);\n            }\n        }\n        \n        return sccs;\n    }\n    \n    private void dfs(int u, Map<Integer, List<Integer>> graph, int[] disc, \n                     int[] low, boolean[] onStack, Stack<Integer> stack) {\n        disc[u] = low[u] = time++;\n        stack.push(u);\n        onStack[u] = true;\n        \n        for (int v : graph.getOrDefault(u, new ArrayList<>())) {\n            if (disc[v] == -1) {\n                dfs(v, graph, disc, low, onStack, stack);\n                low[u] = Math.min(low[u], low[v]);\n            } else if (onStack[v]) {\n                low[u] = Math.min(low[u], disc[v]);\n            }\n        }\n        \n        if (low[u] == disc[u]) {\n            List<Integer> scc = new ArrayList<>();\n            int v;\n            do {\n                v = stack.pop();\n                onStack[v] = false;\n                scc.add(v);\n            } while (v != u);\n            sccs.add(scc);\n        }\n    }\n}",
+    "language": "java",
+    "source": "algorithms/graph/tarjan_scc.java",
+    "description": "Tarjan's algorithm for finding Strongly Connected Components in directed graphs",
+    "tags": ["graph", "scc", "tarjan", "strongly-connected", "dfs"]
+  },
+  {
+    "code": "def matrix_chain_multiplication(dimensions):\n    \"\"\"\n    Find minimum number of scalar multiplications for matrix chain\n    dimensions: array where matrix i has dimensions[i-1] x dimensions[i]\n    \"\"\"\n    n = len(dimensions) - 1\n    dp = [[0] * n for _ in range(n)]\n    split = [[0] * n for _ in range(n)]\n    \n    # l is chain length\n    for l in range(2, n + 1):\n        for i in range(n - l + 1):\n            j = i + l - 1\n            dp[i][j] = float('inf')\n            \n            for k in range(i, j):\n                cost = (dp[i][k] + dp[k + 1][j] + \n                       dimensions[i] * dimensions[k + 1] * dimensions[j + 1])\n                if cost < dp[i][j]:\n                    dp[i][j] = cost\n                    split[i][j] = k\n    \n    def get_parenthesization(i, j):\n        if i == j:\n            return f\"M{i}\"\n        k = split[i][j]\n        return f\"({get_parenthesization(i, k)} x {get_parenthesization(k + 1, j)})\"\n    \n    return dp[0][n - 1], get_parenthesization(0, n - 1)",
+    "language": "python",
+    "source": "algorithms/dp/matrix_chain.py",
+    "description": "Matrix chain multiplication using dynamic programming for optimal parenthesization",
+    "tags": ["dynamic-programming", "matrix", "optimization", "chain-multiplication"]
+  },
+  {
+    "code": "#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass SegmentTree {\nprivate:\n    vector<int> tree;\n    int n;\n    \n    void build(vector<int>& arr, int node, int start, int end) {\n        if (start == end) {\n            tree[node] = arr[start];\n        } else {\n            int mid = (start + end) / 2;\n            build(arr, 2 * node, start, mid);\n            build(arr, 2 * node + 1, mid + 1, end);\n            tree[node] = tree[2 * node] + tree[2 * node + 1];\n        }\n    }\n    \n    void updateHelper(int node, int start, int end, int idx, int val) {\n        if (start == end) {\n            tree[node] = val;\n        } else {\n            int mid = (start + end) / 2;\n            if (idx <= mid) {\n                updateHelper(2 * node, start, mid, idx, val);\n            } else {\n                updateHelper(2 * node + 1, mid + 1, end, idx, val);\n            }\n            tree[node] = tree[2 * node] + tree[2 * node + 1];\n        }\n    }\n    \n    int queryHelper(int node, int start, int end, int l, int r) {\n        if (r < start || end < l) return 0;\n        if (l <= start && end <= r) return tree[node];\n        \n        int mid = (start + end) / 2;\n        int leftSum = queryHelper(2 * node, start, mid, l, r);\n        int rightSum = queryHelper(2 * node + 1, mid + 1, end, l, r);\n        return leftSum + rightSum;\n    }\n    \npublic:\n    SegmentTree(vector<int>& arr) {\n        n = arr.size();\n        tree.resize(4 * n);\n        build(arr, 1, 0, n - 1);\n    }\n    \n    void update(int idx, int val) {\n        updateHelper(1, 0, n - 1, idx, val);\n    }\n    \n    int query(int l, int r) {\n        return queryHelper(1, 0, n - 1, l, r);\n    }\n};",
+    "language": "cpp",
+    "source": "algorithms/tree/segment_tree.cpp",
+    "description": "Segment tree for efficient range queries and point updates",
+    "tags": ["tree", "segment-tree", "range-query", "data-structure"]
+  },
+  {
+    "code": "function manachersPalindrome(s) {\n    // Preprocess string: \"abc\" -> \"^#a#b#c#$\"\n    let t = '^#' + s.split('').join('#') + '#$';\n    let n = t.length;\n    let p = new Array(n).fill(0);\n    let center = 0, right = 0;\n    \n    for (let i = 1; i < n - 1; i++) {\n        let mirror = 2 * center - i;\n        \n        if (i < right) {\n            p[i] = Math.min(right - i, p[mirror]);\n        }\n        \n        // Expand around center i\n        while (t[i + p[i] + 1] === t[i - p[i] - 1]) {\n            p[i]++;\n        }\n        \n        // Update center and right boundary\n        if (i + p[i] > right) {\n            center = i;\n            right = i + p[i];\n        }\n    }\n    \n    // Find longest palindrome\n    let maxLen = 0, centerIndex = 0;\n    for (let i = 1; i < n - 1; i++) {\n        if (p[i] > maxLen) {\n            maxLen = p[i];\n            centerIndex = i;\n        }\n    }\n    \n    let start = (centerIndex - maxLen) / 2;\n    return s.substr(start, maxLen);\n}",
+    "language": "javascript",
+    "source": "algorithms/string/manacher.js",
+    "description": "Manacher's algorithm for finding longest palindromic substring in linear time",
+    "tags": ["string", "palindrome", "manacher", "linear-time"]
+  },
+  {
+    "code": "def aho_corasick(text, patterns):\n    \"\"\"\n    Aho-Corasick algorithm for multiple pattern matching\n    \"\"\"\n    from collections import deque, defaultdict\n    \n    # Build trie\n    trie = {}\n    outputs = defaultdict(list)\n    node_id = 0\n    \n    for pattern in patterns:\n        node = trie\n        for char in pattern:\n            if char not in node:\n                node_id += 1\n                node[char] = {'id': node_id}\n            node = node[char]\n        outputs[node.get('id', 0)].append(pattern)\n    \n    # Build failure links (BFS)\n    fail = {}\n    queue = deque()\n    \n    for char in trie:\n        if isinstance(trie[char], dict):\n            fail[trie[char]['id']] = 0\n            queue.append(trie[char])\n    \n    while queue:\n        node = queue.popleft()\n        for char in node:\n            if char == 'id':\n                continue\n            child = node[char]\n            queue.append(child)\n            \n            # Find failure link\n            f = fail.get(node.get('id', 0), 0)\n            while f != 0 and char not in trie:\n                f = fail[f]\n            fail[child['id']] = trie.get(char, {}).get('id', 0) if f == 0 else f\n    \n    # Search\n    matches = []\n    node = trie\n    for i, char in enumerate(text):\n        while node != trie and char not in node:\n            node = trie  # Simplified for demo\n        \n        if char in node:\n            node = node[char]\n            if node.get('id') in outputs:\n                for pattern in outputs[node['id']]:\n                    matches.append((i - len(pattern) + 1, pattern))\n    \n    return matches",
+    "language": "python",
+    "source": "algorithms/string/aho_corasick.py",
+    "description": "Aho-Corasick algorithm for efficient multiple pattern matching",
+    "tags": ["string", "aho-corasick", "pattern-matching", "trie", "multiple-patterns"]
+  },
+  {
+    "code": "public class FenwickTree {\n    private int[] tree;\n    private int n;\n    \n    public FenwickTree(int n) {\n        this.n = n;\n        this.tree = new int[n + 1];\n    }\n    \n    // Update value at index (1-indexed)\n    public void update(int index, int delta) {\n        while (index <= n) {\n            tree[index] += delta;\n            index += index & (-index);\n        }\n    }\n    \n    // Get prefix sum up to index (1-indexed)\n    public int query(int index) {\n        int sum = 0;\n        while (index > 0) {\n            sum += tree[index];\n            index -= index & (-index);\n        }\n        return sum;\n    }\n    \n    // Range sum query [left, right] (1-indexed)\n    public int rangeQuery(int left, int right) {\n        return query(right) - query(left - 1);\n    }\n    \n    // Build tree from array\n    public static FenwickTree build(int[] arr) {\n        FenwickTree ft = new FenwickTree(arr.length);\n        for (int i = 0; i < arr.length; i++) {\n            ft.update(i + 1, arr[i]);\n        }\n        return ft;\n    }\n}",
+    "language": "java",
+    "source": "algorithms/tree/fenwick_tree.java",
+    "description": "Fenwick Tree (Binary Indexed Tree) for efficient prefix sum queries and updates",
+    "tags": ["tree", "fenwick-tree", "bit", "prefix-sum", "range-query"]
+  },
+  {
+    "code": "def kadane_algorithm(arr):\n    \"\"\"\n    Maximum subarray sum using Kadane's algorithm\n    Returns sum and the subarray indices\n    \"\"\"\n    max_so_far = float('-inf')\n    max_ending_here = 0\n    start = 0\n    end = 0\n    temp_start = 0\n    \n    for i in range(len(arr)):\n        max_ending_here += arr[i]\n        \n        if max_so_far < max_ending_here:\n            max_so_far = max_ending_here\n            start = temp_start\n            end = i\n        \n        if max_ending_here < 0:\n            max_ending_here = 0\n            temp_start = i + 1\n    \n    return max_so_far, arr[start:end + 1]",
+    "language": "python",
+    "source": "algorithms/array/kadane.py",
+    "description": "Kadane's algorithm for maximum subarray sum in linear time",
+    "tags": ["array", "kadane", "dynamic-programming", "maximum-subarray"]
+  },
+  {
+    "code": "#include <vector>\n#include <algorithm>\n#include <climits>\nusing namespace std;\n\nclass TravelingSalesman {\npublic:\n    int tsp(vector<vector<int>>& dist) {\n        int n = dist.size();\n        vector<vector<int>> dp(1 << n, vector<int>(n, INT_MAX));\n        \n        // Start from city 0\n        dp[1][0] = 0;\n        \n        for (int mask = 1; mask < (1 << n); mask++) {\n            for (int u = 0; u < n; u++) {\n                if (!(mask & (1 << u))) continue;\n                if (dp[mask][u] == INT_MAX) continue;\n                \n                for (int v = 0; v < n; v++) {\n                    if (mask & (1 << v)) continue;\n                    \n                    int newMask = mask | (1 << v);\n                    dp[newMask][v] = min(dp[newMask][v], \n                                        dp[mask][u] + dist[u][v]);\n                }\n            }\n        }\n        \n        // Find minimum cost to return to start\n        int fullMask = (1 << n) - 1;\n        int result = INT_MAX;\n        for (int u = 1; u < n; u++) {\n            if (dp[fullMask][u] != INT_MAX) {\n                result = min(result, dp[fullMask][u] + dist[u][0]);\n            }\n        }\n        \n        return result;\n    }\n};",
+    "language": "cpp",
+    "source": "algorithms/dp/tsp.cpp",
+    "description": "Traveling Salesman Problem using dynamic programming with bitmask",
+    "tags": ["dynamic-programming", "tsp", "bitmask", "optimization", "graph"]
+  },
+  {
+    "code": "function boyerMoore(text, pattern) {\n    const m = pattern.length;\n    const n = text.length;\n    \n    // Bad character heuristic\n    const badChar = new Map();\n    for (let i = 0; i < m; i++) {\n        badChar.set(pattern[i], i);\n    }\n    \n    const matches = [];\n    let s = 0; // shift of pattern with respect to text\n    \n    while (s <= n - m) {\n        let j = m - 1;\n        \n        // Keep reducing j while characters match\n        while (j >= 0 && pattern[j] === text[s + j]) {\n            j--;\n        }\n        \n        if (j < 0) {\n            // Pattern found\n            matches.push(s);\n            s += (s + m < n) ? m - (badChar.get(text[s + m]) || -1) : 1;\n        } else {\n            // Shift pattern\n            s += Math.max(1, j - (badChar.get(text[s + j]) || -1));\n        }\n    }\n    \n    return matches;\n}",
+    "language": "javascript",
+    "source": "algorithms/string/boyer_moore.js",
+    "description": "Boyer-Moore pattern matching with bad character heuristic",
+    "tags": ["string", "boyer-moore", "pattern-matching", "heuristic"]
+  },
+  {
+    "code": "def convex_hull_graham_scan(points):\n    \"\"\"\n    Graham scan algorithm for convex hull\n    Returns points in counter-clockwise order\n    \"\"\"\n    def cross(o, a, b):\n        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])\n    \n    # Sort points lexicographically\n    points = sorted(set(points))\n    \n    if len(points) <= 1:\n        return points\n    \n    # Build lower hull\n    lower = []\n    for p in points:\n        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:\n            lower.pop()\n        lower.append(p)\n    \n    # Build upper hull\n    upper = []\n    for p in reversed(points):\n        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:\n            upper.pop()\n        upper.append(p)\n    \n    # Remove last point of each half because it's repeated\n    return lower[:-1] + upper[:-1]",
+    "language": "python",
+    "source": "algorithms/geometry/convex_hull.py",
+    "description": "Graham scan algorithm for finding convex hull of points",
+    "tags": ["geometry", "convex-hull", "graham-scan", "computational-geometry"]
+  },
+  {
+    "code": "public class SuffixArray {\n    public int[] buildSuffixArray(String s) {\n        int n = s.length();\n        Integer[] suffixes = new Integer[n];\n        for (int i = 0; i < n; i++) suffixes[i] = i;\n        \n        // Sort suffixes using first character, then first 2, 4, 8, ...\n        int[] rank = new int[n];\n        int[] tempRank = new int[n];\n        \n        for (int i = 0; i < n; i++) {\n            rank[i] = s.charAt(i);\n        }\n        \n        for (int k = 1; k < n; k *= 2) {\n            final int gap = k;\n            final int[] finalRank = rank.clone();\n            \n            Arrays.sort(suffixes, (a, b) -> {\n                if (finalRank[a] != finalRank[b]) {\n                    return finalRank[a] - finalRank[b];\n                }\n                int rankA = (a + gap < n) ? finalRank[a + gap] : -1;\n                int rankB = (b + gap < n) ? finalRank[b + gap] : -1;\n                return rankA - rankB;\n            });\n            \n            tempRank[suffixes[0]] = 0;\n            for (int i = 1; i < n; i++) {\n                int prev = suffixes[i - 1];\n                int curr = suffixes[i];\n                tempRank[curr] = tempRank[prev];\n                \n                if (finalRank[curr] != finalRank[prev]) {\n                    tempRank[curr]++;\n                } else {\n                    int rankPrev = (prev + gap < n) ? finalRank[prev + gap] : -1;\n                    int rankCurr = (curr + gap < n) ? finalRank[curr + gap] : -1;\n                    if (rankPrev != rankCurr) {\n                        tempRank[curr]++;\n                    }\n                }\n            }\n            rank = tempRank.clone();\n        }\n        \n        return Arrays.stream(suffixes).mapToInt(Integer::intValue).toArray();\n    }\n}",
+    "language": "java",
+    "source": "algorithms/string/suffix_array.java",
+    "description": "Suffix array construction using efficient sorting approach",
+    "tags": ["string", "suffix-array", "sorting", "pattern-matching"]
+  },
+  {
+    "code": "def ford_fulkerson(graph, source, sink):\n    \"\"\"\n    Ford-Fulkerson algorithm for maximum flow\n    graph: adjacency matrix representing capacities\n    \"\"\"\n    from collections import deque\n    \n    n = len(graph)\n    residual = [row[:] for row in graph]  # Copy graph\n    parent = [-1] * n\n    max_flow = 0\n    \n    def bfs(source, sink):\n        visited = [False] * n\n        queue = deque([source])\n        visited[source] = True\n        \n        while queue:\n            u = queue.popleft()\n            \n            for v in range(n):\n                if not visited[v] and residual[u][v] > 0:\n                    visited[v] = True\n                    parent[v] = u\n                    if v == sink:\n                        return True\n                    queue.append(v)\n        return False\n    \n    # Augment flow while there is a path from source to sink\n    while bfs(source, sink):\n        # Find minimum residual capacity along the path\n        path_flow = float('inf')\n        s = sink\n        while s != source:\n            path_flow = min(path_flow, residual[parent[s]][s])\n            s = parent[s]\n        \n        # Update residual capacities\n        v = sink\n        while v != source:\n            u = parent[v]\n            residual[u][v] -= path_flow\n            residual[v][u] += path_flow\n            v = parent[v]\n        \n        max_flow += path_flow\n    \n    return max_flow",
+    "language": "python",
+    "source": "algorithms/graph/ford_fulkerson.py",
+    "description": "Ford-Fulkerson algorithm for computing maximum flow in a network",
+    "tags": ["graph", "max-flow", "ford-fulkerson", "network-flow", "bfs"]
+  },
+  {
+    "code": "#include <vector>\n#include <cmath>\nusing namespace std;\n\nclass FastFourierTransform {\npublic:\n    struct Complex {\n        double real, imag;\n        Complex(double r = 0, double i = 0) : real(r), imag(i) {}\n        Complex operator+(const Complex& other) const {\n            return Complex(real + other.real, imag + other.imag);\n        }\n        Complex operator-(const Complex& other) const {\n            return Complex(real - other.real, imag - other.imag);\n        }\n        Complex operator*(const Complex& other) const {\n            return Complex(real * other.real - imag * other.imag,\n                         real * other.imag + imag * other.real);\n        }\n    };\n    \n    void fft(vector<Complex>& a, bool invert) {\n        int n = a.size();\n        if (n == 1) return;\n        \n        vector<Complex> a0(n / 2), a1(n / 2);\n        for (int i = 0; i < n / 2; i++) {\n            a0[i] = a[2 * i];\n            a1[i] = a[2 * i + 1];\n        }\n        \n        fft(a0, invert);\n        fft(a1, invert);\n        \n        double angle = 2 * M_PI / n * (invert ? -1 : 1);\n        Complex w(1), wn(cos(angle), sin(angle));\n        \n        for (int i = 0; i < n / 2; i++) {\n            a[i] = a0[i] + w * a1[i];\n            a[i + n / 2] = a0[i] - w * a1[i];\n            if (invert) {\n                a[i].real /= 2;\n                a[i].imag /= 2;\n                a[i + n / 2].real /= 2;\n                a[i + n / 2].imag /= 2;\n            }\n            w = w * wn;\n        }\n    }\n    \n    vector<int> multiply(vector<int>& a, vector<int>& b) {\n        vector<Complex> fa(a.begin(), a.end()), fb(b.begin(), b.end());\n        int n = 1;\n        while (n < a.size() + b.size()) n <<= 1;\n        fa.resize(n);\n        fb.resize(n);\n        \n        fft(fa, false);\n        fft(fb, false);\n        \n        for (int i = 0; i < n; i++) {\n            fa[i] = fa[i] * fb[i];\n        }\n        \n        fft(fa, true);\n        \n        vector<int> result(n);\n        for (int i = 0; i < n; i++) {\n            result[i] = round(fa[i].real);\n        }\n        return result;\n    }\n};",
+    "language": "cpp",
+    "source": "algorithms/math/fft.cpp",
+    "description": "Fast Fourier Transform for polynomial multiplication",
+    "tags": ["math", "fft", "polynomial", "multiplication", "divide-and-conquer"]
+  },
+  {
+    "code": "function euclideanGCD(a, b) {\n    // Iterative Euclidean algorithm\n    while (b !== 0) {\n        [a, b] = [b, a % b];\n    }\n    return a;\n}\n\nfunction extendedGCD(a, b) {\n    // Returns [gcd, x, y] where gcd = a*x + b*y\n    if (b === 0) {\n        return [a, 1, 0];\n    }\n    \n    const [gcd, x1, y1] = extendedGCD(b, a % b);\n    const x = y1;\n    const y = x1 - Math.floor(a / b) * y1;\n    \n    return [gcd, x, y];\n}\n\nfunction modularInverse(a, m) {\n    const [gcd, x, _] = extendedGCD(a, m);\n    if (gcd !== 1) {\n        return null; // Inverse doesn't exist\n    }\n    return ((x % m) + m) % m;\n}",
+    "language": "javascript",
+    "source": "algorithms/math/gcd.js",
+    "description": "Euclidean and Extended Euclidean algorithms for GCD and modular inverse",
+    "tags": ["math", "gcd", "euclidean", "number-theory", "modular-arithmetic"]
+  },
+  {
+    "code": "def sieve_of_eratosthenes(n):\n    \"\"\"Generate all primes up to n using Sieve of Eratosthenes\"\"\"\n    if n < 2:\n        return []\n    \n    is_prime = [True] * (n + 1)\n    is_prime[0] = is_prime[1] = False\n    \n    for i in range(2, int(n**0.5) + 1):\n        if is_prime[i]:\n            for j in range(i * i, n + 1, i):\n                is_prime[j] = False\n    \n    return [i for i in range(n + 1) if is_prime[i]]\n\ndef segmented_sieve(left, right):\n    \"\"\"Find primes in range [left, right] using segmented sieve\"\"\"\n    limit = int(right**0.5) + 1\n    base_primes = sieve_of_eratosthenes(limit)\n    \n    size = right - left + 1\n    is_prime = [True] * size\n    \n    for prime in base_primes:\n        start = max(prime * prime, ((left + prime - 1) // prime) * prime)\n        for j in range(start, right + 1, prime):\n            is_prime[j - left] = False\n    \n    return [left + i for i in range(size) if is_prime[i] and left + i > 1]",
+    "language": "python",
+    "source": "algorithms/math/sieve.py",
+    "description": "Sieve of Eratosthenes and segmented sieve for prime generation",
+    "tags": ["math", "primes", "sieve", "number-theory", "eratosthenes"]
+  },
+  {
+    "code": "public class QuickSelect {\n    // Find kth smallest element in unsorted array\n    public int quickSelect(int[] arr, int k) {\n        return quickSelectHelper(arr, 0, arr.length - 1, k - 1);\n    }\n    \n    private int quickSelectHelper(int[] arr, int left, int right, int k) {\n        if (left == right) return arr[left];\n        \n        // Random pivot for better average case\n        int pivotIndex = left + (int)(Math.random() * (right - left + 1));\n        pivotIndex = partition(arr, left, right, pivotIndex);\n        \n        if (k == pivotIndex) {\n            return arr[k];\n        } else if (k < pivotIndex) {\n            return quickSelectHelper(arr, left, pivotIndex - 1, k);\n        } else {\n            return quickSelectHelper(arr, pivotIndex + 1, right, k);\n        }\n    }\n    \n    private int partition(int[] arr, int left, int right, int pivotIndex) {\n        int pivotValue = arr[pivotIndex];\n        swap(arr, pivotIndex, right);\n        int storeIndex = left;\n        \n        for (int i = left; i < right; i++) {\n            if (arr[i] < pivotValue) {\n                swap(arr, storeIndex, i);\n                storeIndex++;\n            }\n        }\n        \n        swap(arr, right, storeIndex);\n        return storeIndex;\n    }\n    \n    private void swap(int[] arr, int i, int j) {\n        int temp = arr[i];\n        arr[i] = arr[j];\n        arr[j] = temp;\n    }\n}",
+    "language": "java",
+    "source": "algorithms/selection/quickselect.java",
+    "description": "QuickSelect algorithm for finding kth smallest element in average O(n) time",
+    "tags": ["selection", "quickselect", "kth-element", "divide-and-conquer"]
+  },
+  {
+    "code": "def mo_algorithm(arr, queries):\n    \"\"\"\n    Mo's algorithm for answering range queries efficiently\n    queries: list of (left, right, index) tuples\n    \"\"\"\n    import math\n    \n    n = len(arr)\n    block_size = int(math.sqrt(n))\n    \n    # Sort queries by block number, then by right endpoint\n    queries.sort(key=lambda q: (q[0] // block_size, q[1]))\n    \n    # Current range [curr_left, curr_right]\n    curr_left = 0\n    curr_right = -1\n    current_sum = 0\n    results = [0] * len(queries)\n    \n    def add(index):\n        nonlocal current_sum\n        current_sum += arr[index]\n    \n    def remove(index):\n        nonlocal current_sum\n        current_sum -= arr[index]\n    \n    for left, right, idx in queries:\n        # Expand/contract the current range to match query\n        while curr_right < right:\n            curr_right += 1\n            add(curr_right)\n        \n        while curr_right > right:\n            remove(curr_right)\n            curr_right -= 1\n        \n        while curr_left < left:\n            remove(curr_left)\n            curr_left += 1\n        \n        while curr_left > left:\n            curr_left -= 1\n            add(curr_left)\n        \n        results[idx] = current_sum\n    \n    return results",
+    "language": "python",
+    "source": "algorithms/optimization/mo_algorithm.py",
+    "description": "Mo's algorithm for efficient offline range query processing",
+    "tags": ["optimization", "mo-algorithm", "range-query", "sqrt-decomposition"]
+  },
+  {
+    "code": "function longestPalindromicSubsequence(s) {\n    const n = s.length;\n    const dp = Array(n).fill(null).map(() => Array(n).fill(0));\n    \n    // Every single character is a palindrome of length 1\n    for (let i = 0; i < n; i++) {\n        dp[i][i] = 1;\n    }\n    \n    // Build table bottom-up\n    for (let len = 2; len <= n; len++) {\n        for (let i = 0; i <= n - len; i++) {\n            const j = i + len - 1;\n            \n            if (s[i] === s[j]) {\n                dp[i][j] = 2 + (len === 2 ? 0 : dp[i + 1][j - 1]);\n            } else {\n                dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);\n            }\n        }\n    }\n    \n    return dp[0][n - 1];\n}",
+    "language": "javascript",
+    "source": "algorithms/dp/longest_palindromic_subsequence.js",
+    "description": "Longest palindromic subsequence using dynamic programming",
+    "tags": ["dynamic-programming", "palindrome", "subsequence", "string"]
+  },
+  {
+    "code": "def sliding_window_maximum(nums, k):\n    \"\"\"\n    Find maximum in all sliding windows of size k\n    Uses deque to maintain elements in decreasing order\n    \"\"\"\n    from collections import deque\n    \n    if not nums or k == 0:\n        return []\n    \n    deq = deque()\n    result = []\n    \n    for i in range(len(nums)):\n        # Remove elements outside current window\n        while deq and deq[0] < i - k + 1:\n            deq.popleft()\n        \n        # Remove elements smaller than current\n        while deq and nums[deq[-1]] < nums[i]:\n            deq.pop()\n        \n        deq.append(i)\n        \n        # Add to result if window is complete\n        if i >= k - 1:\n            result.append(nums[deq[0]])\n    \n    return result",
+    "language": "python",
+    "source": "algorithms/sliding_window/max_sliding_window.py",
+    "description": "Sliding window maximum using monotonic deque in O(n) time",
+    "tags": ["sliding-window", "deque", "monotonic-queue", "optimization"]
+  },
+  {
+    "code": "#include <vector>\n#include <string>\n#include <unordered_set>\nusing namespace std;\n\nclass WordBreak {\npublic:\n    bool wordBreak(string s, unordered_set<string>& wordDict) {\n        int n = s.length();\n        vector<bool> dp(n + 1, false);\n        dp[0] = true;\n        \n        for (int i = 1; i <= n; i++) {\n            for (int j = 0; j < i; j++) {\n                if (dp[j] && wordDict.count(s.substr(j, i - j))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        \n        return dp[n];\n    }\n    \n    vector<string> wordBreakAll(string s, unordered_set<string>& wordDict) {\n        unordered_map<int, vector<string>> memo;\n        return helper(s, 0, wordDict, memo);\n    }\n    \nprivate:\n    vector<string> helper(const string& s, int start, \n                         unordered_set<string>& wordDict,\n                         unordered_map<int, vector<string>>& memo) {\n        if (memo.count(start)) return memo[start];\n        \n        vector<string> result;\n        if (start == s.length()) {\n            result.push_back(\"\");\n            return result;\n        }\n        \n        for (int end = start + 1; end <= s.length(); end++) {\n            string word = s.substr(start, end - start);\n            if (wordDict.count(word)) {\n                vector<string> rest = helper(s, end, wordDict, memo);\n                for (const string& r : rest) {\n                    result.push_back(word + (r.empty() ? \"\" : \" \") + r);\n                }\n            }\n        }\n        \n        memo[start] = result;\n        return result;\n    }\n};",
+    "language": "cpp",
+    "source": "algorithms/dp/word_break.cpp",
+    "description": "Word break problem with dynamic programming and backtracking for all solutions",
+    "tags": ["dynamic-programming", "word-break", "string", "backtracking", "memoization"]
+  }
+]

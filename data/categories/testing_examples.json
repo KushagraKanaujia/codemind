@@ -1,0 +1,198 @@
+[
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\n\ndescribe('Calculator', () => {\n    describe('add', () => {\n        it('should add two positive numbers', () => {\n            expect(add(2, 3)).toBe(5);\n        });\n        \n        it('should add negative numbers', () => {\n            expect(add(-2, -3)).toBe(-5);\n        });\n        \n        it('should handle zero', () => {\n            expect(add(0, 5)).toBe(5);\n            expect(add(5, 0)).toBe(5);\n        });\n    });\n});\n\nfunction add(a, b) {\n    return a + b;\n}",
+    "language": "javascript",
+    "source": "tests/unit/calculator.test.js",
+    "description": "Basic Jest unit test with multiple test cases and assertions",
+    "tags": ["testing", "unit-test", "jest", "javascript", "tdd"]
+  },
+  {
+    "code": "import pytest\n\nclass TestUserService:\n    @pytest.fixture\n    def user_service(self):\n        return UserService()\n    \n    @pytest.fixture\n    def sample_user(self):\n        return {'id': 1, 'name': 'John Doe', 'email': 'john@example.com'}\n    \n    def test_create_user(self, user_service, sample_user):\n        result = user_service.create(sample_user)\n        assert result['id'] == 1\n        assert result['name'] == 'John Doe'\n    \n    def test_get_user(self, user_service):\n        user = user_service.get(1)\n        assert user is not None\n        assert user['id'] == 1\n    \n    def test_user_not_found(self, user_service):\n        with pytest.raises(UserNotFoundError):\n            user_service.get(999)",
+    "language": "python",
+    "source": "tests/unit/test_user_service.py",
+    "description": "Pytest unit tests with fixtures and exception testing",
+    "tags": ["testing", "unit-test", "pytest", "python", "fixtures"]
+  },
+  {
+    "code": "import { describe, it, expect, beforeEach, jest } from '@jest/globals';\n\ndescribe('UserRepository', () => {\n    let repository;\n    let mockDb;\n    \n    beforeEach(() => {\n        mockDb = {\n            query: jest.fn(),\n            insert: jest.fn(),\n            update: jest.fn()\n        };\n        repository = new UserRepository(mockDb);\n    });\n    \n    it('should find user by id', async () => {\n        const mockUser = { id: 1, name: 'John' };\n        mockDb.query.mockResolvedValue([mockUser]);\n        \n        const result = await repository.findById(1);\n        \n        expect(mockDb.query).toHaveBeenCalledWith(\n            'SELECT * FROM users WHERE id = ?',\n            [1]\n        );\n        expect(result).toEqual(mockUser);\n    });\n    \n    it('should create new user', async () => {\n        mockDb.insert.mockResolvedValue({ insertId: 1 });\n        \n        const userData = { name: 'Jane', email: 'jane@example.com' };\n        const result = await repository.create(userData);\n        \n        expect(mockDb.insert).toHaveBeenCalled();\n        expect(result.id).toBe(1);\n    });\n});",
+    "language": "javascript",
+    "source": "tests/unit/user_repository.test.js",
+    "description": "Jest unit test with mocks and async operations",
+    "tags": ["testing", "unit-test", "jest", "mocking", "async"]
+  },
+  {
+    "code": "import unittest\nfrom unittest.mock import Mock, patch, MagicMock\n\nclass TestEmailService(unittest.TestCase):\n    def setUp(self):\n        self.email_service = EmailService()\n    \n    @patch('smtplib.SMTP')\n    def test_send_email(self, mock_smtp):\n        # Arrange\n        mock_server = MagicMock()\n        mock_smtp.return_value = mock_server\n        \n        # Act\n        result = self.email_service.send(\n            to='user@example.com',\n            subject='Test',\n            body='Hello'\n        )\n        \n        # Assert\n        self.assertTrue(result)\n        mock_server.login.assert_called_once()\n        mock_server.sendmail.assert_called_once()\n        mock_server.quit.assert_called_once()\n    \n    @patch('smtplib.SMTP')\n    def test_send_email_failure(self, mock_smtp):\n        mock_smtp.side_effect = Exception('Connection failed')\n        \n        with self.assertRaises(EmailSendError):\n            self.email_service.send('user@example.com', 'Test', 'Body')",
+    "language": "python",
+    "source": "tests/unit/test_email_service.py",
+    "description": "Python unittest with mocking and patching external dependencies",
+    "tags": ["testing", "unit-test", "python", "unittest", "mocking", "patch"]
+  },
+  {
+    "code": "import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';\nimport request from 'supertest';\nimport { app } from '../src/app';\nimport { db } from '../src/database';\n\ndescribe('API Integration Tests', () => {\n    beforeAll(async () => {\n        await db.connect();\n        await db.migrate();\n    });\n    \n    afterAll(async () => {\n        await db.cleanup();\n        await db.disconnect();\n    });\n    \n    describe('POST /api/users', () => {\n        it('should create a new user', async () => {\n            const userData = {\n                name: 'John Doe',\n                email: 'john@example.com',\n                password: 'password123'\n            };\n            \n            const response = await request(app)\n                .post('/api/users')\n                .send(userData)\n                .expect(201);\n            \n            expect(response.body).toHaveProperty('id');\n            expect(response.body.email).toBe(userData.email);\n            expect(response.body).not.toHaveProperty('password');\n        });\n        \n        it('should reject duplicate email', async () => {\n            const userData = { name: 'Jane', email: 'john@example.com' };\n            \n            await request(app)\n                .post('/api/users')\n                .send(userData)\n                .expect(400);\n        });\n    });\n});",
+    "language": "javascript",
+    "source": "tests/integration/api.test.js",
+    "description": "API integration tests with database setup and teardown",
+    "tags": ["testing", "integration-test", "api", "supertest", "jest", "database"]
+  },
+  {
+    "code": "import pytest\nimport asyncio\nfrom httpx import AsyncClient\nfrom app import app, database\n\n@pytest.fixture(scope=\"session\")\nasync def db():\n    await database.connect()\n    await database.execute(\"CREATE TABLE users (id SERIAL PRIMARY KEY, name TEXT)\")\n    yield database\n    await database.execute(\"DROP TABLE users\")\n    await database.disconnect()\n\n@pytest.fixture\nasync def client():\n    async with AsyncClient(app=app, base_url=\"http://test\") as client:\n        yield client\n\n@pytest.mark.asyncio\nasync def test_create_and_get_user(client, db):\n    # Create user\n    response = await client.post(\"/users\", json={\"name\": \"Alice\"})\n    assert response.status_code == 201\n    user_id = response.json()[\"id\"]\n    \n    # Get user\n    response = await client.get(f\"/users/{user_id}\")\n    assert response.status_code == 200\n    assert response.json()[\"name\"] == \"Alice\"\n\n@pytest.mark.asyncio\nasync def test_list_users(client, db):\n    response = await client.get(\"/users\")\n    assert response.status_code == 200\n    assert isinstance(response.json(), list)",
+    "language": "python",
+    "source": "tests/integration/test_api.py",
+    "description": "Async API integration tests with pytest and database fixtures",
+    "tags": ["testing", "integration-test", "pytest", "async", "api", "python"]
+  },
+  {
+    "code": "import { test, expect } from '@playwright/test';\n\ntest.describe('User Authentication Flow', () => {\n    test.beforeEach(async ({ page }) => {\n        await page.goto('http://localhost:3000');\n    });\n    \n    test('should register new user', async ({ page }) => {\n        await page.click('text=Sign Up');\n        await page.fill('input[name=\"email\"]', 'test@example.com');\n        await page.fill('input[name=\"password\"]', 'password123');\n        await page.fill('input[name=\"confirmPassword\"]', 'password123');\n        await page.click('button[type=\"submit\"]');\n        \n        await expect(page.locator('text=Welcome')).toBeVisible();\n    });\n    \n    test('should login existing user', async ({ page }) => {\n        await page.fill('input[name=\"email\"]', 'test@example.com');\n        await page.fill('input[name=\"password\"]', 'password123');\n        await page.click('button[type=\"submit\"]');\n        \n        await expect(page).toHaveURL(/.*dashboard/);\n        await expect(page.locator('.user-profile')).toBeVisible();\n    });\n    \n    test('should show error for invalid credentials', async ({ page }) => {\n        await page.fill('input[name=\"email\"]', 'wrong@example.com');\n        await page.fill('input[name=\"password\"]', 'wrong');\n        await page.click('button[type=\"submit\"]');\n        \n        await expect(page.locator('.error-message')).toContainText('Invalid credentials');\n    });\n});",
+    "language": "typescript",
+    "source": "tests/e2e/auth.spec.ts",
+    "description": "Playwright E2E tests for user authentication flow",
+    "tags": ["testing", "e2e", "playwright", "automation", "typescript"]
+  },
+  {
+    "code": "describe('E-commerce Checkout Flow', () => {\n    beforeEach(() => {\n        cy.visit('/products');\n    });\n    \n    it('should complete checkout process', () => {\n        // Add products to cart\n        cy.get('[data-testid=\"product-1\"]').click();\n        cy.get('[data-testid=\"add-to-cart\"]').click();\n        cy.get('[data-testid=\"cart-icon\"]').click();\n        \n        // Verify cart\n        cy.get('[data-testid=\"cart-items\"]').should('have.length', 1);\n        cy.get('[data-testid=\"cart-total\"]').should('contain', '$29.99');\n        \n        // Proceed to checkout\n        cy.get('[data-testid=\"checkout-button\"]').click();\n        \n        // Fill shipping info\n        cy.get('input[name=\"address\"]').type('123 Main St');\n        cy.get('input[name=\"city\"]').type('New York');\n        cy.get('input[name=\"zip\"]').type('10001');\n        \n        // Fill payment info\n        cy.get('input[name=\"cardNumber\"]').type('4242424242424242');\n        cy.get('input[name=\"expiry\"]').type('12/25');\n        cy.get('input[name=\"cvc\"]').type('123');\n        \n        // Submit order\n        cy.get('[data-testid=\"submit-order\"]').click();\n        \n        // Verify success\n        cy.url().should('include', '/order/confirmation');\n        cy.get('[data-testid=\"order-success\"]').should('be.visible');\n    });\n});",
+    "language": "javascript",
+    "source": "tests/e2e/checkout.cy.js",
+    "description": "Cypress E2E test for complete checkout flow",
+    "tags": ["testing", "e2e", "cypress", "javascript", "checkout"]
+  },
+  {
+    "code": "import { test, expect } from '@playwright/test';\n\ntest.describe('Responsive Design', () => {\n    const viewports = [\n        { name: 'mobile', width: 375, height: 667 },\n        { name: 'tablet', width: 768, height: 1024 },\n        { name: 'desktop', width: 1920, height: 1080 }\n    ];\n    \n    viewports.forEach(({ name, width, height }) => {\n        test(`should display correctly on ${name}`, async ({ page }) => {\n            await page.setViewportSize({ width, height });\n            await page.goto('http://localhost:3000');\n            \n            await expect(page.locator('nav')).toBeVisible();\n            \n            if (name === 'mobile') {\n                await expect(page.locator('.hamburger-menu')).toBeVisible();\n            } else {\n                await expect(page.locator('.desktop-menu')).toBeVisible();\n            }\n            \n            // Take screenshot for visual regression\n            await page.screenshot({ path: `screenshots/${name}.png` });\n        });\n    });\n});",
+    "language": "typescript",
+    "source": "tests/e2e/responsive.spec.ts",
+    "description": "Responsive design testing across multiple viewports",
+    "tags": ["testing", "e2e", "responsive", "playwright", "visual-regression"]
+  },
+  {
+    "code": "import pytest\nfrom faker import Faker\nfrom factory import Factory, Faker as FactoryFaker\n\nclass UserFactory(Factory):\n    class Meta:\n        model = User\n    \n    id = FactoryFaker('random_int', min=1, max=1000)\n    name = FactoryFaker('name')\n    email = FactoryFaker('email')\n    created_at = FactoryFaker('date_time')\n\nclass PostFactory(Factory):\n    class Meta:\n        model = Post\n    \n    id = FactoryFaker('random_int', min=1, max=1000)\n    title = FactoryFaker('sentence')\n    content = FactoryFaker('text', max_nb_chars=200)\n    author = SubFactory(UserFactory)\n\n@pytest.fixture\ndef user():\n    return UserFactory.build()\n\n@pytest.fixture\ndef post_with_author():\n    return PostFactory.build()\n\ndef test_user_creation(user):\n    assert user.name is not None\n    assert '@' in user.email\n\ndef test_post_has_author(post_with_author):\n    assert post_with_author.author is not None\n    assert post_with_author.author.email is not None",
+    "language": "python",
+    "source": "tests/factories/factories.py",
+    "description": "Test data factories using Factory Boy for generating test objects",
+    "tags": ["testing", "fixtures", "factory", "test-data", "python"]
+  },
+  {
+    "code": "import { jest } from '@jest/globals';\n\nexport const createMockUser = (overrides = {}) => ({\n    id: 1,\n    name: 'John Doe',\n    email: 'john@example.com',\n    role: 'user',\n    ...overrides\n});\n\nexport const createMockRequest = (overrides = {}) => ({\n    body: {},\n    params: {},\n    query: {},\n    headers: {},\n    user: null,\n    ...overrides\n});\n\nexport const createMockResponse = () => {\n    const res = {};\n    res.status = jest.fn().mockReturnValue(res);\n    res.json = jest.fn().mockReturnValue(res);\n    res.send = jest.fn().mockReturnValue(res);\n    res.set = jest.fn().mockReturnValue(res);\n    return res;\n};\n\n// Usage\nconst mockUser = createMockUser({ role: 'admin' });\nconst req = createMockRequest({ params: { id: '1' } });\nconst res = createMockResponse();",
+    "language": "javascript",
+    "source": "tests/mocks/factories.js",
+    "description": "Mock factories for creating test objects and Express req/res mocks",
+    "tags": ["testing", "mocks", "factories", "jest", "express"]
+  },
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\n\n// TDD Example: Write test first, then implementation\n\n// Step 1: Write failing test\ndescribe('StringCalculator', () => {\n    it('should return 0 for empty string', () => {\n        expect(add('')).toBe(0);\n    });\n    \n    it('should return number for single number', () => {\n        expect(add('5')).toBe(5);\n    });\n    \n    it('should return sum for two numbers', () => {\n        expect(add('1,2')).toBe(3);\n    });\n    \n    it('should handle multiple numbers', () => {\n        expect(add('1,2,3,4,5')).toBe(15);\n    });\n    \n    it('should handle newlines as delimiters', () => {\n        expect(add('1\\n2,3')).toBe(6);\n    });\n});\n\n// Step 2: Write minimal implementation to pass tests\nfunction add(numbers) {\n    if (numbers === '') return 0;\n    \n    const nums = numbers\n        .split(/[,\\n]/)\n        .map(n => parseInt(n, 10));\n    \n    return nums.reduce((sum, n) => sum + n, 0);\n}",
+    "language": "javascript",
+    "source": "tests/tdd/string_calculator.test.js",
+    "description": "Test-Driven Development example with incremental test cases",
+    "tags": ["testing", "tdd", "test-first", "jest", "methodology"]
+  },
+  {
+    "code": "import pytest\nimport hypothesis.strategies as st\nfrom hypothesis import given, assume\n\n# Property-based testing\n@given(st.lists(st.integers()))\ndef test_reverse_twice_is_identity(lst):\n    \"\"\"Reversing a list twice should give the original list\"\"\"\n    assert list(reversed(list(reversed(lst)))) == lst\n\n@given(st.lists(st.integers()))\ndef test_sorted_is_idempotent(lst):\n    \"\"\"Sorting a sorted list should not change it\"\"\"\n    sorted_once = sorted(lst)\n    sorted_twice = sorted(sorted_once)\n    assert sorted_once == sorted_twice\n\n@given(st.integers(), st.integers())\ndef test_addition_commutative(a, b):\n    \"\"\"Addition should be commutative\"\"\"\n    assert a + b == b + a\n\n@given(st.integers(min_value=1, max_value=100))\ndef test_percentage_calculation(value):\n    \"\"\"Percentage calculation should be reversible\"\"\"\n    percentage = value * 0.2\n    original = percentage / 0.2\n    assert abs(original - value) < 0.0001",
+    "language": "python",
+    "source": "tests/property/test_properties.py",
+    "description": "Property-based testing using Hypothesis for testing mathematical properties",
+    "tags": ["testing", "property-based", "hypothesis", "python", "generative"]
+  },
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\nimport { render } from '@testing-library/react';\nimport UserCard from './UserCard';\n\ndescribe('UserCard Snapshots', () => {\n    it('should match snapshot for regular user', () => {\n        const { container } = render(\n            <UserCard \n                name=\"John Doe\" \n                email=\"john@example.com\" \n                role=\"user\" \n            />\n        );\n        expect(container).toMatchSnapshot();\n    });\n    \n    it('should match snapshot for admin user', () => {\n        const { container } = render(\n            <UserCard \n                name=\"Admin User\" \n                email=\"admin@example.com\" \n                role=\"admin\" \n            />\n        );\n        expect(container).toMatchSnapshot();\n    });\n    \n    it('should match inline snapshot for user list', () => {\n        const { container } = render(\n            <UserList users={[\n                { id: 1, name: 'User 1' },\n                { id: 2, name: 'User 2' }\n            ]} />\n        );\n        expect(container.firstChild).toMatchInlineSnapshot();\n    });\n});",
+    "language": "javascript",
+    "source": "tests/snapshot/UserCard.test.js",
+    "description": "Snapshot testing for React components to detect unintended changes",
+    "tags": ["testing", "snapshot", "react", "jest", "ui"]
+  },
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\nimport { performance } from 'perf_hooks';\n\ndescribe('Performance Tests', () => {\n    it('should process large array in under 100ms', () => {\n        const data = Array.from({ length: 10000 }, (_, i) => i);\n        \n        const start = performance.now();\n        const result = data.map(x => x * 2).filter(x => x % 2 === 0);\n        const duration = performance.now() - start;\n        \n        expect(duration).toBeLessThan(100);\n        expect(result.length).toBe(10000);\n    });\n    \n    it('should handle concurrent requests efficiently', async () => {\n        const requests = 100;\n        const start = performance.now();\n        \n        await Promise.all(\n            Array.from({ length: requests }, () => \n                fetch('http://localhost:3000/api/health')\n            )\n        );\n        \n        const duration = performance.now() - start;\n        const avgTime = duration / requests;\n        \n        expect(avgTime).toBeLessThan(50); // Avg < 50ms per request\n    });\n});",
+    "language": "javascript",
+    "source": "tests/performance/benchmark.test.js",
+    "description": "Performance testing with timing assertions",
+    "tags": ["testing", "performance", "benchmark", "jest", "timing"]
+  },
+  {
+    "code": "import pytest\nimport time\n\n@pytest.mark.benchmark\ndef test_fibonacci_performance(benchmark):\n    def fibonacci(n):\n        if n <= 1:\n            return n\n        return fibonacci(n-1) + fibonacci(n-2)\n    \n    result = benchmark(fibonacci, 20)\n    assert result == 6765\n\n@pytest.mark.benchmark\ndef test_sorting_performance(benchmark):\n    data = list(range(10000, 0, -1))\n    result = benchmark(sorted, data)\n    assert result == list(range(1, 10001))\n\n@pytest.mark.benchmark(min_rounds=5)\ndef test_api_call_performance(benchmark):\n    import requests\n    \n    def make_api_call():\n        return requests.get('http://localhost:8000/api/data')\n    \n    result = benchmark(make_api_call)\n    assert result.status_code == 200",
+    "language": "python",
+    "source": "tests/performance/test_benchmarks.py",
+    "description": "Benchmark testing with pytest-benchmark for performance regression detection",
+    "tags": ["testing", "performance", "benchmark", "pytest", "python"]
+  },
+  {
+    "code": "import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';\nimport nock from 'nock';\n\ndescribe('External API Integration', () => {\n    afterEach(() => {\n        nock.cleanAll();\n    });\n    \n    it('should fetch user data from external API', async () => {\n        nock('https://api.example.com')\n            .get('/users/1')\n            .reply(200, {\n                id: 1,\n                name: 'John Doe',\n                email: 'john@example.com'\n            });\n        \n        const result = await fetchUser(1);\n        \n        expect(result.name).toBe('John Doe');\n        expect(nock.isDone()).toBe(true);\n    });\n    \n    it('should handle API errors gracefully', async () => {\n        nock('https://api.example.com')\n            .get('/users/999')\n            .reply(404, { error: 'User not found' });\n        \n        await expect(fetchUser(999)).rejects.toThrow('User not found');\n    });\n    \n    it('should retry on network errors', async () => {\n        nock('https://api.example.com')\n            .get('/users/1')\n            .times(2)\n            .replyWithError('Network error')\n            .get('/users/1')\n            .reply(200, { id: 1, name: 'John' });\n        \n        const result = await fetchUserWithRetry(1);\n        expect(result.name).toBe('John');\n    });\n});",
+    "language": "javascript",
+    "source": "tests/integration/external_api.test.js",
+    "description": "Testing external API integrations with HTTP mocking using nock",
+    "tags": ["testing", "integration-test", "api", "mocking", "nock"]
+  },
+  {
+    "code": "import pytest\nfrom unittest.mock import Mock, patch\nimport redis\n\n@pytest.fixture\ndef mock_redis():\n    with patch('redis.Redis') as mock:\n        instance = Mock()\n        mock.return_value = instance\n        yield instance\n\n@pytest.fixture\ndef cache_service(mock_redis):\n    return CacheService(mock_redis)\n\ndef test_cache_get(cache_service, mock_redis):\n    mock_redis.get.return_value = b'{\"key\": \"value\"}'\n    \n    result = cache_service.get('test_key')\n    \n    mock_redis.get.assert_called_once_with('test_key')\n    assert result == {'key': 'value'}\n\ndef test_cache_set(cache_service, mock_redis):\n    cache_service.set('test_key', {'data': 'test'}, ttl=3600)\n    \n    mock_redis.setex.assert_called_once()\n    args = mock_redis.setex.call_args[0]\n    assert args[0] == 'test_key'\n    assert args[1] == 3600\n\ndef test_cache_delete(cache_service, mock_redis):\n    cache_service.delete('test_key')\n    \n    mock_redis.delete.assert_called_once_with('test_key')",
+    "language": "python",
+    "source": "tests/integration/test_cache.py",
+    "description": "Redis cache integration testing with mocked connections",
+    "tags": ["testing", "integration-test", "redis", "cache", "python", "mocking"]
+  },
+  {
+    "code": "import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';\nimport { MongoMemoryServer } from 'mongodb-memory-server';\nimport mongoose from 'mongoose';\nimport User from '../models/User';\n\ndescribe('Database Integration Tests', () => {\n    let mongoServer;\n    \n    beforeAll(async () => {\n        mongoServer = await MongoMemoryServer.create();\n        const uri = mongoServer.getUri();\n        await mongoose.connect(uri);\n    });\n    \n    afterAll(async () => {\n        await mongoose.disconnect();\n        await mongoServer.stop();\n    });\n    \n    beforeEach(async () => {\n        await User.deleteMany({});\n    });\n    \n    it('should create and retrieve user', async () => {\n        const userData = { name: 'John', email: 'john@example.com' };\n        const user = await User.create(userData);\n        \n        const found = await User.findById(user._id);\n        expect(found.name).toBe('John');\n        expect(found.email).toBe('john@example.com');\n    });\n    \n    it('should update user', async () => {\n        const user = await User.create({ name: 'John', email: 'john@example.com' });\n        \n        await User.findByIdAndUpdate(user._id, { name: 'Jane' });\n        \n        const updated = await User.findById(user._id);\n        expect(updated.name).toBe('Jane');\n    });\n    \n    it('should enforce unique email constraint', async () => {\n        await User.create({ name: 'John', email: 'john@example.com' });\n        \n        await expect(\n            User.create({ name: 'Jane', email: 'john@example.com' })\n        ).rejects.toThrow();\n    });\n});",
+    "language": "javascript",
+    "source": "tests/integration/database.test.js",
+    "description": "MongoDB integration tests using in-memory database",
+    "tags": ["testing", "integration-test", "mongodb", "database", "jest"]
+  },
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\nimport request from 'supertest';\nimport { app } from '../src/app';\n\ndescribe('Authentication Middleware Tests', () => {\n    let authToken;\n    \n    beforeAll(async () => {\n        // Create test user and get token\n        const response = await request(app)\n            .post('/auth/register')\n            .send({\n                email: 'test@example.com',\n                password: 'password123'\n            });\n        authToken = response.body.token;\n    });\n    \n    it('should allow access with valid token', async () => {\n        await request(app)\n            .get('/api/protected')\n            .set('Authorization', `Bearer ${authToken}`)\n            .expect(200);\n    });\n    \n    it('should reject request without token', async () => {\n        await request(app)\n            .get('/api/protected')\n            .expect(401);\n    });\n    \n    it('should reject request with invalid token', async () => {\n        await request(app)\n            .get('/api/protected')\n            .set('Authorization', 'Bearer invalid_token')\n            .expect(401);\n    });\n    \n    it('should reject expired token', async () => {\n        const expiredToken = generateToken({ id: 1 }, { expiresIn: '-1h' });\n        \n        await request(app)\n            .get('/api/protected')\n            .set('Authorization', `Bearer ${expiredToken}`)\n            .expect(401);\n    });\n});",
+    "language": "javascript",
+    "source": "tests/integration/auth_middleware.test.js",
+    "description": "Authentication middleware integration testing with various token scenarios",
+    "tags": ["testing", "integration-test", "authentication", "middleware", "jwt"]
+  },
+  {
+    "code": "import pytest\nimport asyncio\nfrom unittest.mock import AsyncMock, patch\n\n@pytest.mark.asyncio\nasync def test_concurrent_operations():\n    async def task(n):\n        await asyncio.sleep(0.1)\n        return n * 2\n    \n    results = await asyncio.gather(\n        task(1), task(2), task(3), task(4), task(5)\n    )\n    \n    assert results == [2, 4, 6, 8, 10]\n\n@pytest.mark.asyncio\nasync def test_async_context_manager():\n    class AsyncResource:\n        async def __aenter__(self):\n            self.connected = True\n            return self\n        \n        async def __aexit__(self, *args):\n            self.connected = False\n    \n    async with AsyncResource() as resource:\n        assert resource.connected is True\n\n@pytest.mark.asyncio\nasync def test_async_api_call():\n    with patch('aiohttp.ClientSession.get') as mock_get:\n        mock_response = AsyncMock()\n        mock_response.status = 200\n        mock_response.json = AsyncMock(return_value={'data': 'test'})\n        mock_get.return_value.__aenter__.return_value = mock_response\n        \n        result = await fetch_data('http://api.example.com/data')\n        assert result['data'] == 'test'",
+    "language": "python",
+    "source": "tests/async/test_async.py",
+    "description": "Async testing patterns with pytest for concurrent operations",
+    "tags": ["testing", "async", "pytest", "python", "concurrent"]
+  },
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\nimport { render, screen, fireEvent, waitFor } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\nimport LoginForm from './LoginForm';\n\ndescribe('LoginForm Component', () => {\n    it('should render login form', () => {\n        render(<LoginForm />);\n        \n        expect(screen.getByLabelText(/email/i)).toBeInTheDocument();\n        expect(screen.getByLabelText(/password/i)).toBeInTheDocument();\n        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();\n    });\n    \n    it('should submit form with valid data', async () => {\n        const onSubmit = jest.fn();\n        render(<LoginForm onSubmit={onSubmit} />);\n        \n        await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');\n        await userEvent.type(screen.getByLabelText(/password/i), 'password123');\n        await userEvent.click(screen.getByRole('button', { name: /login/i }));\n        \n        await waitFor(() => {\n            expect(onSubmit).toHaveBeenCalledWith({\n                email: 'test@example.com',\n                password: 'password123'\n            });\n        });\n    });\n    \n    it('should show validation errors', async () => {\n        render(<LoginForm />);\n        \n        await userEvent.click(screen.getByRole('button', { name: /login/i }));\n        \n        expect(await screen.findByText(/email is required/i)).toBeInTheDocument();\n        expect(await screen.findByText(/password is required/i)).toBeInTheDocument();\n    });\n});",
+    "language": "javascript",
+    "source": "tests/components/LoginForm.test.js",
+    "description": "React component testing with React Testing Library and user interactions",
+    "tags": ["testing", "react", "component", "ui", "user-interaction"]
+  },
+  {
+    "code": "import { describe, it, expect, beforeEach } from '@jest/globals';\nimport { renderHook, act } from '@testing-library/react';\nimport { useCounter } from './useCounter';\n\ndescribe('useCounter Hook', () => {\n    it('should initialize with default value', () => {\n        const { result } = renderHook(() => useCounter());\n        \n        expect(result.current.count).toBe(0);\n    });\n    \n    it('should initialize with custom value', () => {\n        const { result } = renderHook(() => useCounter(10));\n        \n        expect(result.current.count).toBe(10);\n    });\n    \n    it('should increment count', () => {\n        const { result } = renderHook(() => useCounter());\n        \n        act(() => {\n            result.current.increment();\n        });\n        \n        expect(result.current.count).toBe(1);\n    });\n    \n    it('should decrement count', () => {\n        const { result } = renderHook(() => useCounter(5));\n        \n        act(() => {\n            result.current.decrement();\n        });\n        \n        expect(result.current.count).toBe(4);\n    });\n    \n    it('should reset count', () => {\n        const { result } = renderHook(() => useCounter());\n        \n        act(() => {\n            result.current.increment();\n            result.current.increment();\n            result.current.reset();\n        });\n        \n        expect(result.current.count).toBe(0);\n    });\n});",
+    "language": "javascript",
+    "source": "tests/hooks/useCounter.test.js",
+    "description": "React custom hook testing with renderHook from React Testing Library",
+    "tags": ["testing", "react", "hooks", "custom-hooks", "jest"]
+  },
+  {
+    "code": "import pytest\nfrom selenium import webdriver\nfrom selenium.webdriver.common.by import By\nfrom selenium.webdriver.support.ui import WebDriverWait\nfrom selenium.webdriver.support import expected_conditions as EC\n\n@pytest.fixture\ndef driver():\n    driver = webdriver.Chrome()\n    driver.implicitly_wait(10)\n    yield driver\n    driver.quit()\n\ndef test_search_functionality(driver):\n    driver.get('http://localhost:3000')\n    \n    # Find search input and enter text\n    search_input = driver.find_element(By.ID, 'search')\n    search_input.send_keys('test query')\n    \n    # Click search button\n    search_button = driver.find_element(By.CSS_SELECTOR, 'button[type=\"submit\"]')\n    search_button.click()\n    \n    # Wait for results\n    wait = WebDriverWait(driver, 10)\n    results = wait.until(\n        EC.presence_of_element_located((By.CLASS_NAME, 'search-results'))\n    )\n    \n    assert results.is_displayed()\n    assert len(driver.find_elements(By.CLASS_NAME, 'result-item')) > 0\n\ndef test_form_validation(driver):\n    driver.get('http://localhost:3000/contact')\n    \n    submit_button = driver.find_element(By.CSS_SELECTOR, 'button[type=\"submit\"]')\n    submit_button.click()\n    \n    error_messages = driver.find_elements(By.CLASS_NAME, 'error-message')\n    assert len(error_messages) > 0",
+    "language": "python",
+    "source": "tests/selenium/test_ui.py",
+    "description": "Selenium WebDriver tests for browser automation and UI testing",
+    "tags": ["testing", "selenium", "e2e", "browser", "automation"]
+  },
+  {
+    "code": "import { describe, it, expect } from '@jest/globals';\nimport { render, screen } from '@testing-library/react';\nimport { axe, toHaveNoViolations } from 'jest-axe';\nimport App from './App';\n\nexpect.extend(toHaveNoViolations);\n\ndescribe('Accessibility Tests', () => {\n    it('should not have accessibility violations', async () => {\n        const { container } = render(<App />);\n        const results = await axe(container);\n        \n        expect(results).toHaveNoViolations();\n    });\n    \n    it('should have proper heading hierarchy', () => {\n        render(<App />);\n        \n        const h1 = screen.getByRole('heading', { level: 1 });\n        expect(h1).toBeInTheDocument();\n    });\n    \n    it('should have proper aria labels', () => {\n        render(<App />);\n        \n        const nav = screen.getByRole('navigation');\n        expect(nav).toHaveAttribute('aria-label');\n    });\n    \n    it('should be keyboard navigable', () => {\n        render(<App />);\n        \n        const buttons = screen.getAllByRole('button');\n        buttons.forEach(button => {\n            expect(button).not.toHaveAttribute('tabindex', '-1');\n        });\n    });\n});",
+    "language": "javascript",
+    "source": "tests/accessibility/a11y.test.js",
+    "description": "Accessibility testing using jest-axe to detect WCAG violations",
+    "tags": ["testing", "accessibility", "a11y", "wcag", "jest"]
+  },
+  {
+    "code": "import { test, expect } from '@playwright/test';\n\ntest.describe('Visual Regression Tests', () => {\n    test('homepage should match screenshot', async ({ page }) => {\n        await page.goto('http://localhost:3000');\n        await page.waitForLoadState('networkidle');\n        \n        await expect(page).toHaveScreenshot('homepage.png', {\n            maxDiffPixels: 100\n        });\n    });\n    \n    test('button hover state should match', async ({ page }) => {\n        await page.goto('http://localhost:3000');\n        \n        const button = page.locator('button.primary');\n        await button.hover();\n        \n        await expect(button).toHaveScreenshot('button-hover.png');\n    });\n    \n    test('modal should match screenshot', async ({ page }) => {\n        await page.goto('http://localhost:3000');\n        \n        await page.click('[data-testid=\"open-modal\"]');\n        await page.waitForSelector('.modal', { state: 'visible' });\n        \n        await expect(page.locator('.modal')).toHaveScreenshot('modal.png');\n    });\n});",
+    "language": "typescript",
+    "source": "tests/visual/screenshots.spec.ts",
+    "description": "Visual regression testing with Playwright screenshot comparison",
+    "tags": ["testing", "visual-regression", "screenshots", "playwright", "ui"]
+  },
+  {
+    "code": "import pytest\nfrom locust import HttpUser, task, between\n\nclass WebsiteUser(HttpUser):\n    wait_time = between(1, 3)\n    \n    @task(3)\n    def view_homepage(self):\n        self.client.get(\"/\")\n    \n    @task(2)\n    def view_product(self):\n        self.client.get(\"/products/1\")\n    \n    @task(1)\n    def add_to_cart(self):\n        self.client.post(\"/cart\", json={\n            \"product_id\": 1,\n            \"quantity\": 1\n        })\n    \n    def on_start(self):\n        \"\"\"Login before starting tasks\"\"\"\n        response = self.client.post(\"/auth/login\", json={\n            \"email\": \"test@example.com\",\n            \"password\": \"password123\"\n        })\n        self.token = response.json()[\"token\"]\n\n# Run with: locust -f tests/load/locustfile.py --host=http://localhost:8000",
+    "language": "python",
+    "source": "tests/load/locustfile.py",
+    "description": "Load testing with Locust to simulate concurrent users and measure performance",
+    "tags": ["testing", "load-testing", "performance", "locust", "python"]
+  },
+  {
+    "code": "import http from 'k6/http';\nimport { check, sleep } from 'k6';\nimport { Rate } from 'k6/metrics';\n\nconst errorRate = new Rate('errors');\n\nexport const options = {\n    stages: [\n        { duration: '30s', target: 20 },  // Ramp up to 20 users\n        { duration: '1m', target: 50 },   // Stay at 50 users\n        { duration: '30s', target: 0 },   // Ramp down\n    ],\n    thresholds: {\n        http_req_duration: ['p(95)<500'], // 95% of requests must complete below 500ms\n        errors: ['rate<0.1'],             // Error rate must be below 10%\n    },\n};\n\nexport default function() {\n    const url = 'http://localhost:3000/api/users';\n    \n    const payload = JSON.stringify({\n        name: 'Test User',\n        email: `test${__VU}@example.com`\n    });\n    \n    const params = {\n        headers: { 'Content-Type': 'application/json' },\n    };\n    \n    const response = http.post(url, payload, params);\n    \n    const success = check(response, {\n        'status is 201': (r) => r.status === 201,\n        'response has id': (r) => r.json('id') !== undefined,\n    });\n    \n    errorRate.add(!success);\n    sleep(1);\n}",
+    "language": "javascript",
+    "source": "tests/load/load_test.js",
+    "description": "K6 load testing script with stages, thresholds, and custom metrics",
+    "tags": ["testing", "load-testing", "k6", "performance", "stress-test"]
+  }
+]

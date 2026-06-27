@@ -1,0 +1,198 @@
+[
+  {
+    "code": "function debounce(func, wait) {\n  let timeout;\n  return function executedFunction(...args) {\n    const later = () => {\n      clearTimeout(timeout);\n      func(...args);\n    };\n    clearTimeout(timeout);\n    timeout = setTimeout(later, wait);\n  };\n}",
+    "language": "javascript",
+    "source": "utilities/debounce.js",
+    "description": "Debounce function to limit function execution rate",
+    "tags": ["async", "performance", "utility"]
+  },
+  {
+    "code": "function throttle(func, limit) {\n  let inThrottle;\n  return function(...args) {\n    if (!inThrottle) {\n      func.apply(this, args);\n      inThrottle = true;\n      setTimeout(() => inThrottle = false, limit);\n    }\n  };\n}",
+    "language": "javascript",
+    "source": "utilities/throttle.js",
+    "description": "Throttle function to ensure function runs at most once per time period",
+    "tags": ["async", "performance", "utility"]
+  },
+  {
+    "code": "function chunk(array, size) {\n  const chunks = [];\n  for (let i = 0; i < array.length; i += size) {\n    chunks.push(array.slice(i, i + size));\n  }\n  return chunks;\n}",
+    "language": "javascript",
+    "source": "utilities/chunk.js",
+    "description": "Split array into chunks of specified size",
+    "tags": ["array", "utility", "chunking"]
+  },
+  {
+    "code": "function slugify(text) {\n  return text\n    .toString()\n    .toLowerCase()\n    .trim()\n    .replace(/\\s+/g, '-')\n    .replace(/[^\\w\\-]+/g, '')\n    .replace(/\\-\\-+/g, '-');\n}",
+    "language": "javascript",
+    "source": "utilities/slugify.js",
+    "description": "Convert text to URL-friendly slug",
+    "tags": ["string", "url", "utility"]
+  },
+  {
+    "code": "function formatCurrency(amount, currency = 'USD', locale = 'en-US') {\n  return new Intl.NumberFormat(locale, {\n    style: 'currency',\n    currency: currency,\n  }).format(amount);\n}",
+    "language": "javascript",
+    "source": "utilities/format_currency.js",
+    "description": "Format number as currency with locale support",
+    "tags": ["formatting", "currency", "i18n"]
+  },
+  {
+    "code": "def flatten(nested_list, depth=float('inf')):\n    result = []\n    for item in nested_list:\n        if isinstance(item, list) and depth > 0:\n            result.extend(flatten(item, depth - 1))\n        else:\n            result.append(item)\n    return result",
+    "language": "python",
+    "source": "utilities/flatten.py",
+    "description": "Flatten nested arrays to specified depth",
+    "tags": ["array", "utility", "flatten"]
+  },
+  {
+    "code": "import re\n\ndef is_valid_email(email: str) -> bool:\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))",
+    "language": "python",
+    "source": "utilities/validate_email.py",
+    "description": "Email validation using regex",
+    "tags": ["validation", "email", "regex"]
+  },
+  {
+    "code": "function deepMerge(target, ...sources) {\n  if (!sources.length) return target;\n  const source = sources.shift();\n  if (isObject(target) && isObject(source)) {\n    for (const key in source) {\n      if (isObject(source[key])) {\n        if (!target[key]) Object.assign(target, { [key]: {} });\n        deepMerge(target[key], source[key]);\n      } else {\n        Object.assign(target, { [key]: source[key] });\n      }\n    }\n  }\n  return deepMerge(target, ...sources);\n}\nfunction isObject(item) {\n  return item && typeof item === 'object' && !Array.isArray(item);\n}",
+    "language": "javascript",
+    "source": "utilities/deep_merge.js",
+    "description": "Deep merge objects recursively",
+    "tags": ["object", "merge", "utility"]
+  },
+  {
+    "code": "def retry_with_backoff(func, max_retries=3, backoff_factor=2):\n    import time\n    for attempt in range(max_retries):\n        try:\n            return func()\n        except Exception as e:\n            if attempt == max_retries - 1:\n                raise\n            wait_time = backoff_factor ** attempt\n            time.sleep(wait_time)",
+    "language": "python",
+    "source": "utilities/retry.py",
+    "description": "Retry function with exponential backoff",
+    "tags": ["async", "retry", "resilience"]
+  },
+  {
+    "code": "function shuffle(array) {\n  const shuffled = [...array];\n  for (let i = shuffled.length - 1; i > 0; i--) {\n    const j = Math.floor(Math.random() * (i + 1));\n    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];\n  }\n  return shuffled;\n}",
+    "language": "javascript",
+    "source": "utilities/shuffle.js",
+    "description": "Fisher-Yates shuffle algorithm",
+    "tags": ["array", "random", "shuffle"]
+  },
+  {
+    "code": "from datetime import datetime\n\ndef format_relative_time(date: datetime) -> str:\n    now = datetime.now()\n    diff = now - date\n    if diff.days > 365:\n        return f\"{diff.days // 365} years ago\"\n    if diff.days > 30:\n        return f\"{diff.days // 30} months ago\"\n    if diff.days > 0:\n        return f\"{diff.days} days ago\"\n    if diff.seconds > 3600:\n        return f\"{diff.seconds // 3600} hours ago\"\n    if diff.seconds > 60:\n        return f\"{diff.seconds // 60} minutes ago\"\n    return \"just now\"",
+    "language": "python",
+    "source": "utilities/relative_time.py",
+    "description": "Format datetime as relative time",
+    "tags": ["date", "time", "formatting"]
+  },
+  {
+    "code": "function clamp(value, min, max) {\n  return Math.min(Math.max(value, min), max);\n}",
+    "language": "javascript",
+    "source": "utilities/clamp.js",
+    "description": "Clamp number between min and max",
+    "tags": ["math", "utility", "numbers"]
+  },
+  {
+    "code": "import hashlib\n\ndef hash_password(password: str) -> str:\n    return hashlib.sha256(password.encode()).hexdigest()\n\ndef generate_token(length: int = 32) -> str:\n    import secrets\n    return secrets.token_urlsafe(length)",
+    "language": "python",
+    "source": "utilities/crypto.py",
+    "description": "Password hashing and token generation",
+    "tags": ["security", "crypto", "hashing"]
+  },
+  {
+    "code": "function pick(obj, keys) {\n  return keys.reduce((result, key) => {\n    if (obj.hasOwnProperty(key)) result[key] = obj[key];\n    return result;\n  }, {});\n}",
+    "language": "javascript",
+    "source": "utilities/pick.js",
+    "description": "Pick specified keys from object",
+    "tags": ["object", "utility", "selection"]
+  },
+  {
+    "code": "function omit(obj, keys) {\n  const keysToOmit = new Set(keys);\n  return Object.keys(obj).reduce((result, key) => {\n    if (!keysToOmit.has(key)) result[key] = obj[key];\n    return result;\n  }, {});\n}",
+    "language": "javascript",
+    "source": "utilities/omit.js",
+    "description": "Omit specified keys from object",
+    "tags": ["object", "utility", "selection"]
+  },
+  {
+    "code": "import csv\nimport json\n\ndef csv_to_json(csv_file: str, json_file: str):\n    data = []\n    with open(csv_file, 'r') as f:\n        for row in csv.DictReader(f):\n            data.append(row)\n    with open(json_file, 'w') as f:\n        json.dump(data, f, indent=2)",
+    "language": "python",
+    "source": "utilities/csv_to_json.py",
+    "description": "Convert CSV to JSON",
+    "tags": ["file", "conversion", "csv"]
+  },
+  {
+    "code": "function groupBy(array, key) {\n  return array.reduce((result, item) => {\n    const group = typeof key === 'function' ? key(item) : item[key];\n    (result[group] = result[group] || []).push(item);\n    return result;\n  }, {});\n}",
+    "language": "javascript",
+    "source": "utilities/group_by.js",
+    "description": "Group array elements by key",
+    "tags": ["array", "grouping", "utility"]
+  },
+  {
+    "code": "def memoize(func):\n    cache = {}\n    def wrapper(*args):\n        if args in cache:\n            return cache[args]\n        result = func(*args)\n        cache[args] = result\n        return result\n    return wrapper",
+    "language": "python",
+    "source": "utilities/memoize.py",
+    "description": "Memoization decorator",
+    "tags": ["caching", "performance", "decorator"]
+  },
+  {
+    "code": "function truncate(str, length, suffix = '...') {\n  if (str.length <= length) return str;\n  return str.slice(0, length - suffix.length) + suffix;\n}",
+    "language": "javascript",
+    "source": "utilities/truncate.js",
+    "description": "Truncate string with suffix",
+    "tags": ["string", "formatting", "utility"]
+  },
+  {
+    "code": "def is_valid_url(url: str) -> bool:\n    import re\n    pattern = re.compile(\n        r'^https?://'\n        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\\.)+[A-Z]{2,6}\\.?|'\n        r'localhost|'\n        r'\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})'\n        r'(?::\\d+)?(?:/?|[/?]\\S+)$', re.IGNORECASE)\n    return bool(pattern.match(url))",
+    "language": "python",
+    "source": "utilities/validate_url.py",
+    "description": "URL validation",
+    "tags": ["validation", "url", "regex"]
+  },
+  {
+    "code": "function sleep(ms) {\n  return new Promise(resolve => setTimeout(resolve, ms));\n}",
+    "language": "javascript",
+    "source": "utilities/sleep.js",
+    "description": "Async sleep utility",
+    "tags": ["async", "utility", "delay"]
+  },
+  {
+    "code": "def calculate_percentage(value: float, total: float, decimals: int = 2) -> float:\n    if total == 0:\n        return 0.0\n    return round((value / total) * 100, decimals)",
+    "language": "python",
+    "source": "utilities/percentage.py",
+    "description": "Calculate percentage",
+    "tags": ["math", "calculation", "utility"]
+  },
+  {
+    "code": "function uniqueBy(array, key) {\n  const seen = new Set();\n  return array.filter(item => {\n    const value = typeof key === 'function' ? key(item) : item[key];\n    if (seen.has(value)) return false;\n    seen.add(value);\n    return true;\n  });\n}",
+    "language": "javascript",
+    "source": "utilities/unique_by.js",
+    "description": "Get unique array elements by key",
+    "tags": ["array", "unique", "utility"]
+  },
+  {
+    "code": "import random\nimport string\n\ndef generate_random_string(length: int = 10) -> str:\n    chars = string.ascii_letters + string.digits\n    return ''.join(random.choice(chars) for _ in range(length))",
+    "language": "python",
+    "source": "utilities/random_string.py",
+    "description": "Generate random string",
+    "tags": ["random", "string", "utility"]
+  },
+  {
+    "code": "function parseQueryString(url) {\n  const params = {};\n  const queryString = url.split('?')[1];\n  if (!queryString) return params;\n  queryString.split('&').forEach(param => {\n    const [key, value] = param.split('=');\n    params[decodeURIComponent(key)] = decodeURIComponent(value || '');\n  });\n  return params;\n}",
+    "language": "javascript",
+    "source": "utilities/parse_query.js",
+    "description": "Parse URL query string",
+    "tags": ["url", "parsing", "utility"]
+  },
+  {
+    "code": "def partition(lst, predicate):\n    true_items = []\n    false_items = []\n    for item in lst:\n        if predicate(item):\n            true_items.append(item)\n        else:\n            false_items.append(item)\n    return true_items, false_items",
+    "language": "python",
+    "source": "utilities/partition.py",
+    "description": "Partition list by predicate",
+    "tags": ["array", "filtering", "utility"]
+  },
+  {
+    "code": "function capitalize(str) {\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n}",
+    "language": "javascript",
+    "source": "utilities/capitalize.js",
+    "description": "Capitalize first letter",
+    "tags": ["string", "formatting", "utility"]
+  },
+  {
+    "code": "function promiseTimeout(promise, ms) {\n  return Promise.race([\n    promise,\n    new Promise((_, reject) =>\n      setTimeout(() => reject(new Error('Timeout')), ms)\n    )\n  ]);\n}",
+    "language": "javascript",
+    "source": "utilities/promise_timeout.js",
+    "description": "Add timeout to promise",
+    "tags": ["async", "promise", "timeout"]
+  }
+]
