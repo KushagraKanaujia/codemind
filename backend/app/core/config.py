@@ -11,13 +11,14 @@ from pydantic import Field
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    # AI APIs
-    anthropic_api_key: str = Field(..., alias="ANTHROPIC_API_KEY")
-    openai_api_key: str = Field(..., alias="OPENAI_API_KEY")
+    # AI APIs (optional: only the live /search endpoint needs them;
+    # the /demo endpoints work with none of these set)
+    anthropic_api_key: str = Field("", alias="ANTHROPIC_API_KEY")
+    openai_api_key: str = Field("", alias="OPENAI_API_KEY")
 
     # Supabase
-    supabase_url: str = Field(..., alias="SUPABASE_URL")
-    supabase_key: str = Field(..., alias="SUPABASE_KEY")
+    supabase_url: str = Field("", alias="SUPABASE_URL")
+    supabase_key: str = Field("", alias="SUPABASE_KEY")
     supabase_service_key: Optional[str] = Field(None, alias="SUPABASE_SERVICE_KEY")
 
     # Redis
@@ -39,10 +40,14 @@ class Settings(BaseSettings):
 
     # CORS
     allowed_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    # Also allow GitHub Codespaces forwarded-port URLs
+    allowed_origin_regex: str = r"https://.*\.app\.github\.dev"
 
     class Config:
         env_file = ".env"
         case_sensitive = False
+        populate_by_name = True
+        extra = "ignore"
 
 
 # Global settings instance

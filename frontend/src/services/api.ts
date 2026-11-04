@@ -38,7 +38,19 @@ export interface SearchResponse {
   total_found: number
   reasoning?: string
   took_ms?: number
+  /** Where the results came from (set by the frontend). */
+  mode?: SearchMode
 }
+
+/**
+ * browser - in-browser keyword search over the bundled dataset (no backend, no keys)
+ * demo    - backend /demo/search (canned results, no keys); falls back to browser
+ * live    - backend /search/ (Claude ranking; needs API keys)
+ */
+export type SearchMode = 'browser' | 'demo' | 'live'
+
+export const SEARCH_MODE: SearchMode =
+  (import.meta.env.VITE_SEARCH_MODE as SearchMode) || 'demo'
 
 /**
  * Check if running in demo mode
@@ -53,17 +65,26 @@ export async function isDemoMode(): Promise<boolean> {
 }
 
 /**
- * Search for code using semantic search (auto-detects demo mode)
+ * Search for code. Behaviour depends on VITE_SEARCH_MODE (see SearchMode).
  */
 export async function searchCode(query: SearchQuery): Promise<SearchResponse> {
-  // Try demo endpoint first (works without API keys)
+  if (SEARCH_MODE === 'browser') {
+    const { localSearch } = await import('./localSearch')
+    return localSearch(query)
+  }
+
+  if (SEARCH_MODE === 'live') {
+    const response = await api.post<SearchResponse>('/search/', query)
+    return { ...response.data, mode: 'live' }
+  }
+
+  // demo: try the backend demo endpoint, fall back to in-browser search
   try {
     const response = await api.post<SearchResponse>('/demo/search', query)
-    return response.data
-  } catch (demoError) {
-    // Fall back to real search if demo fails
-    const response = await api.post<SearchResponse>('/search/', query)
-    return response.data
+    return { ...response.data, mode: 'demo' }
+  } catch {
+    const { localSearch } = await import('./localSearch')
+    return localSearch(query)
   }
 }
 

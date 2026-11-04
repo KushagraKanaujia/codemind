@@ -3,8 +3,6 @@ Claude AI service for code analysis and reasoning.
 """
 
 from typing import List, Dict, Optional
-from anthropic import Anthropic
-from openai import OpenAI
 from loguru import logger
 
 from app.core.config import settings
@@ -15,6 +13,10 @@ class ClaudeService:
 
     def __init__(self):
         """Initialize Claude and OpenAI clients."""
+        # Imported here so the keyless demo can run without these SDKs installed.
+        from anthropic import Anthropic
+        from openai import OpenAI
+
         self.client = Anthropic(api_key=settings.anthropic_api_key)
         self.openai_client = OpenAI(api_key=settings.openai_api_key)
         self.model = "claude-sonnet-4-5-20250929"
