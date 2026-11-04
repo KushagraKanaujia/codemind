@@ -36,7 +36,7 @@ The UI has three search modes, picked with `VITE_SEARCH_MODE`:
 | `demo` (default for local/Codespaces) | Backend `POST /api/v1/demo/search` returns fixed example results. If the API isn't running, it falls back to `browser`. | None |
 | `live` | Backend `POST /api/v1/search/`: candidate snippets go to Claude (`ClaudeService.rank_code_results`), which returns a ranking, explanations and per-criterion scores as JSON. | Anthropic + OpenAI |
 
-> **Status:** the embedding and pgvector parts (`VectorService`, `scripts/index_code_data.py`, [docs/EMBEDDINGS.md](docs/EMBEDDINGS.md)) are written but not yet wired into `/search`. The live endpoint currently ranks a small built-in candidate set, and the testing-agent half of the project is still on the roadmap.
+> **Status:** the embedding and pgvector parts (`VectorService`, `backend/scripts/index_code_data.py`, [docs/EMBEDDINGS.md](docs/EMBEDDINGS.md)) are written but not yet wired into `/search`. The live endpoint currently ranks a small built-in candidate set, and the testing-agent half of the project is still on the roadmap.
 
 ```
 React UI (Vite) ──► /api/v1/demo/search   canned results, no keys
