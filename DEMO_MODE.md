@@ -7,7 +7,7 @@ Try CodeMind right now without setting up API keys or databases!
 ### Option 1: Automatic (macOS)
 
 ```bash
-cd /Users/kush/codemind
+cd codemind
 ./start-demo.sh
 ```
 
@@ -21,7 +21,7 @@ This script will:
 
 **Terminal 1 - Backend:**
 ```bash
-cd /Users/kush/codemind/backend
+cd codemind/backend
 
 # Copy demo config
 cp .env.demo .env
@@ -37,7 +37,7 @@ uvicorn app.main:app --reload
 
 **Terminal 2 - Frontend:**
 ```bash
-cd /Users/kush/codemind/frontend
+cd codemind/frontend
 
 # Install dependencies (first time only)
 npm install

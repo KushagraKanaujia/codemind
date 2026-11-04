@@ -4,13 +4,15 @@ import './SearchBar.css'
 interface SearchBarProps {
   onSearch: (query: string, criteria: string[], language?: string) => void
   loading: boolean
+  query: string
+  onQueryChange: (query: string) => void
 }
 
 const CRITERIA_OPTIONS = ['fast', 'readable', 'secure', 'simple', 'maintainable']
-const LANGUAGE_OPTIONS = ['python', 'javascript', 'typescript', 'java', 'c', 'cpp', 'go', 'rust']
+// Languages present in data/complete_dataset.json
+const LANGUAGE_OPTIONS = ['python', 'javascript', 'typescript', 'java', 'cpp', 'sql', 'c', 'go', 'rust']
 
-function SearchBar({ onSearch, loading }: SearchBarProps) {
-  const [query, setQuery] = useState('')
+function SearchBar({ onSearch, loading, query, onQueryChange: setQuery }: SearchBarProps) {
   const [selectedCriteria, setSelectedCriteria] = useState<string[]>([])
   const [selectedLanguage, setSelectedLanguage] = useState('')
   const [showFilters, setShowFilters] = useState(false)

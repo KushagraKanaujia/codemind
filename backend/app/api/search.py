@@ -5,16 +5,30 @@ Search API endpoints.
 from fastapi import APIRouter, HTTPException, status
 from loguru import logger
 import time
+from typing import List, Optional
 
 from app.models.search import SearchQuery, SearchResponse, CodeResult
 from app.services.claude_service import ClaudeService
-from app.services.vector_service import VectorService
+from app.core.config import settings
 
 router = APIRouter(prefix="/search", tags=["search"])
 
-# Initialize services
-claude_service = ClaudeService()
-vector_service = VectorService()
+# Services are created lazily so the API (and the keyless /demo endpoints)
+# can start without real API keys.
+_claude_service: Optional[ClaudeService] = None
+
+
+def get_claude_service() -> ClaudeService:
+    global _claude_service
+    if _claude_service is None:
+        if not settings.anthropic_api_key or not settings.openai_api_key:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Live search needs ANTHROPIC_API_KEY and OPENAI_API_KEY in backend/.env. "
+                "Use /api/v1/demo/search for the keyless demo.",
+            )
+        _claude_service = ClaudeService()
+    return _claude_service
 
 
 @router.post("/", response_model=SearchResponse)
@@ -29,6 +43,7 @@ async def search_code(query: SearchQuery):
     4. Return ranked results with explanations
     """
     start_time = time.time()
+    claude_service = get_claude_service()
 
     try:
         logger.info(f"Search query: '{query.query}' with criteria: {query.criteria}")

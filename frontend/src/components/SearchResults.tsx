@@ -1,14 +1,32 @@
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
+import python from 'react-syntax-highlighter/dist/esm/languages/prism/python'
+import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript'
+import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx'
+import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typescript'
+import tsx from 'react-syntax-highlighter/dist/esm/languages/prism/tsx'
+import java from 'react-syntax-highlighter/dist/esm/languages/prism/java'
+import c from 'react-syntax-highlighter/dist/esm/languages/prism/c'
+import cpp from 'react-syntax-highlighter/dist/esm/languages/prism/cpp'
+import sql from 'react-syntax-highlighter/dist/esm/languages/prism/sql'
+import go from 'react-syntax-highlighter/dist/esm/languages/prism/go'
+import rust from 'react-syntax-highlighter/dist/esm/languages/prism/rust'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { SearchResponse } from '../services/api'
 import './SearchResults.css'
+
+// Register only the languages we need (keeps the bundle small)
+Object.entries({ python, javascript, jsx, typescript, tsx, java, c, cpp, sql, go, rust }).forEach(
+  ([name, lang]) => SyntaxHighlighter.registerLanguage(name, lang)
+)
 
 interface SearchResultsProps {
   results: SearchResponse
 }
 
 function SearchResults({ results }: SearchResultsProps) {
-  const { query, results: codeResults, total_found, reasoning, took_ms } = results
+  const { query, results: codeResults, total_found, reasoning, took_ms, mode } = results
+  const reasoningLabel =
+    mode === 'browser' ? 'How these were found:' : mode === 'demo' ? 'Demo analysis (canned):' : "Claude's Analysis:"
 
   if (!codeResults || codeResults.length === 0) {
     return (
@@ -26,7 +44,7 @@ function SearchResults({ results }: SearchResultsProps) {
         <h3 className="results-title">
           Found {total_found} result{total_found !== 1 ? 's' : ''} for "{query}"
         </h3>
-        {took_ms && (
+        {took_ms != null && (
           <span className="results-timing">
             in {took_ms.toFixed(0)}ms
           </span>
@@ -37,7 +55,7 @@ function SearchResults({ results }: SearchResultsProps) {
         <div className="reasoning-box">
           <div className="reasoning-header">
             <span className="reasoning-icon">🧠</span>
-            <strong>Claude's Analysis:</strong>
+            <strong>{reasoningLabel}</strong>
           </div>
           <p className="reasoning-text">{reasoning}</p>
         </div>
@@ -102,7 +120,7 @@ function SearchResults({ results }: SearchResultsProps) {
 
             <div className="result-footer">
               <span className="similarity-score">
-                Similarity: {(result.similarity_score * 100).toFixed(0)}%
+                {mode === 'browser' ? 'Relevance' : 'Similarity'}: {(result.similarity_score * 100).toFixed(0)}%
               </span>
             </div>
           </div>

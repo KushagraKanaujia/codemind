@@ -125,3 +125,27 @@
     color: #dc2626;
   }
 }
+
+/* Mode banner + clickable examples (showcase) */
+.mode-banner {
+  border: 1px solid rgba(100, 108, 255, 0.35);
+  background: rgba(100, 108, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.example-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.example-button:hover {
+  text-decoration: underline;
+}
